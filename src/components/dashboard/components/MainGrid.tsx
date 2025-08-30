@@ -32,7 +32,6 @@ export default function MainGrid() {
     true,
   );
 
-  // Adjust to new nested shape: data.penerimaan.*
   const penerimaan = data?.data?.penerimaan;
   const labels = (penerimaan?.detail || []).map((d) => d.wilayah);
   const barLancar = (penerimaan?.detail || []).map(
@@ -50,6 +49,14 @@ export default function MainGrid() {
     const n = parseFloat(s);
     return Number.isNaN(n) ? 0 : n;
   };
+
+  const toNum = (s?: string) => {
+    const n = Number(s);
+    return Number.isNaN(n) ? 0 : n;
+  };
+
+  const pct = (num: number, den: number) =>
+    den > 0 ? Math.round((num / den) * 1000) / 10 : 0;
 
   const thisMonthRows = (penerimaan?.detail ?? []).map(
     (d: PenerimaanItem, idx) => ({
@@ -71,47 +78,59 @@ export default function MainGrid() {
     }),
   );
 
-  // Map data.rekap.detail to grid rows expected by CustomizedDataGrid
   const rekapDetail = data?.data?.rekap?.detail ?? [];
-  const rekapRows = (rekapDetail as RekapDetailItem[]).map((r, idx) => ({
-    id: idx + 1,
-    kasir: r.nama,
-    // Total DRD Penagihan
-    tdrd_lancar_lbr: Number(r.jmlrek_lancar) || 0,
-    tdrd_lancar_jumlah: Number(r.ttltagihan_lancar) || 0,
-    tdrd_tunggakan_lbr: Number(r.jmlrek_tunggakan) || 0,
-    tdrd_tunggakan_jumlah: Number(r.ttltagihan_tunggakan) || 0,
-    tdrd_total_lbr:
-      (Number(r.jmlrek_lancar) || 0) + (Number(r.jmlrek_tunggakan) || 0),
-    tdrd_total_jumlah:
-      (Number(r.ttltagihan_lancar) || 0) +
-      (Number(r.ttltagihan_tunggakan) || 0),
-    // Total Lunas DRD Penagihan
-    lunas_lancar_lbr: Number(r.lbrlunas_lancar) || 0,
-    lunas_lancar_jumlah: Number(r.ttltagihanlunas_lancar) || 0,
-    lunas_tunggakan_lbr: Number(r.lbrlunas_tunggakan) || 0,
-    lunas_tunggakan_jumlah: Number(r.ttltagihanlunas_tunggakan) || 0,
-    lunas_total_lbr:
-      (Number(r.lbrlunas_lancar) || 0) + (Number(r.lbrlunas_tunggakan) || 0),
-    lunas_total_jumlah:
-      (Number(r.ttltagihanlunas_lancar) || 0) +
-      (Number(r.ttltagihanlunas_tunggakan) || 0),
-    // Sisa DRD Penagihan
-    sisa_lancar_lbr: Number(r.jmlrek_sisa_lancar) || 0,
-    sisa_lancar_jumlah: Number(r.sisatagihan_lancar) || 0,
-    sisa_tunggakan_lbr: Number(r.jmlrek_sisa_tunggakan) || 0,
-    sisa_tunggakan_jumlah: Number(r.sisatagihan_tunggakan) || 0,
-    sisa_total_lbr:
-      (Number(r.jmlrek_sisa_lancar) || 0) +
-      (Number(r.jmlrek_sisa_tunggakan) || 0),
-    sisa_total_jumlah:
-      (Number(r.sisatagihan_lancar) || 0) +
-      (Number(r.sisatagihan_tunggakan) || 0),
-    // Efisiensi (dummy zeros per request)
-    ef_lancar: 0,
-    ef_tunggakan: 0,
-    ef_total: 0,
-  }));
+  const rekapRows = (rekapDetail as RekapDetailItem[]).map((r, idx) => {
+    const tdrdLancarLbr = toNum(r.jmlrek_lancar);
+    const tdrdLancarJumlah = toNum(r.ttltagihan_lancar);
+    const tdrdTunggakanLbr = toNum(r.jmlrek_tunggakan);
+    const tdrdTunggakanJumlah = toNum(r.ttltagihan_tunggakan);
+    const tdrdTotalLbr = toNum(r.jmlrek);
+    const tdrdTotalJumlah = toNum(r.ttltagihan);
+
+    const lunasLancarLbr = toNum(r.lbrlunas_lancar);
+    const lunasLancarJumlah = toNum(r.ttltagihanlunas_lancar);
+    const lunasTunggakanLbr = toNum(r.lbrlunas_tunggakan);
+    const lunasTunggakanJumlah = toNum(r.ttltagihanlunas_tunggakan);
+    const lunasTotalLbr = toNum(r.lbrlunas);
+    const lunasTotalJumlah = toNum(r.ttltagihanlunas);
+
+    const sisaLancarLbr = toNum(r.jmlrek_sisa_lancar);
+    const sisaLancarJumlah = toNum(r.sisatagihan_lancar);
+    const sisaTunggakanLbr = toNum(r.jmlrek_sisa_tunggakan);
+    const sisaTunggakanJumlah = toNum(r.sisatagihan_tunggakan);
+    const sisaTotalLbr = toNum(r.jmlrek_sisa);
+    const sisaTotalJumlah = toNum(r.sisatagihan);
+
+    return {
+      id: idx + 1,
+      kasir: r.nama,
+      // Total DRD Penagihan
+      tdrd_lancar_lbr: tdrdLancarLbr,
+      tdrd_lancar_jumlah: tdrdLancarJumlah,
+      tdrd_tunggakan_lbr: tdrdTunggakanLbr,
+      tdrd_tunggakan_jumlah: tdrdTunggakanJumlah,
+      tdrd_total_lbr: tdrdTotalLbr,
+      tdrd_total_jumlah: tdrdTotalJumlah,
+      // Total Lunas DRD Penagihan
+      lunas_lancar_lbr: lunasLancarLbr,
+      lunas_lancar_jumlah: lunasLancarJumlah,
+      lunas_tunggakan_lbr: lunasTunggakanLbr,
+      lunas_tunggakan_jumlah: lunasTunggakanJumlah,
+      lunas_total_lbr: lunasTotalLbr,
+      lunas_total_jumlah: lunasTotalJumlah,
+      // Sisa DRD Penagihan
+      sisa_lancar_lbr: sisaLancarLbr,
+      sisa_lancar_jumlah: sisaLancarJumlah,
+      sisa_tunggakan_lbr: sisaTunggakanLbr,
+      sisa_tunggakan_jumlah: sisaTunggakanJumlah,
+      sisa_total_lbr: sisaTotalLbr,
+      sisa_total_jumlah: sisaTotalJumlah,
+      // Efisiensi: (lunas / total) * 100
+      ef_lancar: pct(lunasLancarJumlah, tdrdLancarJumlah),
+      ef_tunggakan: pct(lunasTunggakanJumlah, tdrdTunggakanJumlah),
+      ef_total: pct(lunasTotalJumlah, tdrdTotalJumlah),
+    };
+  });
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
