@@ -1,0 +1,19 @@
+{
+  "servers": {
+    "mui-mcp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mui/mcp@latest"]
+    },
+    "Hublang": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "-y",
+        "apidog-mcp-server@latest",
+        "--site-id=756495"
+      ]
+    }
+  }
+}
