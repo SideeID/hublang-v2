@@ -11,9 +11,9 @@ import Box from '@mui/material/Box';
 import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
-import Typography from '@mui/material/Typography';
 import SideMenu from '../../components/dashboard/components/SideMenu';
 import AppNavbar from '../../components/dashboard/components/AppNavbar';
+import Header from '../../components/dashboard/components/Header';
 import AppTheme from '../../components/shared-theme/AppTheme';
 import {
   chartsCustomizations,
@@ -21,6 +21,13 @@ import {
   datePickersCustomizations,
   treeViewCustomizations,
 } from '../../components/dashboard/theme/customizations';
+import dayjs from 'dayjs';
+import { useDrd } from '@/hooks/useDrd';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -33,6 +40,7 @@ type Row = {
   id: number;
   no: number;
   golongan: string;
+  wilayah: string;
   // Pelanggan
   pelanggan_total: number;
   pelanggan_aktif: number;
@@ -65,6 +73,12 @@ const columns: GridColDef<Row>[] = [
     minWidth: 140,
     flex: 1,
     colSpan: (params) => (params.row?.id === -1 ? 0 : undefined),
+  },
+  {
+    field: 'wilayah',
+    headerName: 'WILAYAH',
+    minWidth: 160,
+    flex: 1,
   },
   // Pelanggan group
   {
@@ -153,7 +167,6 @@ const columns: GridColDef<Row>[] = [
 ];
 
 const columnGroupingModel: GridColumnGroupingModel = [
-  // Leave 'no', 'golongan', and 'total_tagihan' ungrouped so they span 2 header rows
   {
     groupId: 'Pelanggan',
     children: [
@@ -177,38 +190,7 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
-const rows: Row[] = [
-  {
-    id: 1,
-    no: 1,
-    golongan: 'Sosial A',
-    pelanggan_total: 120,
-    pelanggan_aktif: 110,
-    pelanggan_pasif: 10,
-    pelanggan_m3: 1450,
-    tagihan_harga_air: 22500000,
-    tagihan_administrasi: 1200000,
-    tagihan_data_meter: 800000,
-    total_tagihan: 24500000,
-    rata_m3: 12.1,
-    rata_rupiah: 204167,
-  },
-  {
-    id: 2,
-    no: 2,
-    golongan: 'Rumah Tangga A',
-    pelanggan_total: 200,
-    pelanggan_aktif: 188,
-    pelanggan_pasif: 12,
-    pelanggan_m3: 3100,
-    tagihan_harga_air: 42000000,
-    tagihan_administrasi: 2000000,
-    tagihan_data_meter: 1500000,
-    total_tagihan: 45500000,
-    rata_m3: 16.5,
-    rata_rupiah: 242021,
-  },
-];
+const demoRows: Row[] = [];
 
 function computeTotals(data: Row[]) {
   const sum = {
@@ -235,7 +217,6 @@ function computeTotals(data: Row[]) {
     sum.rata_m3 += r.rata_m3;
     sum.rata_rupiah += r.rata_rupiah;
   });
-  // For averages, keep simple mean across rows
   const count = data.length || 1;
   return {
     sum,
@@ -244,7 +225,42 @@ function computeTotals(data: Row[]) {
 }
 
 export default function Page() {
-  const { sum, avg } = React.useMemo(() => computeTotals(rows), []);
+  const [month, setMonth] = React.useState(dayjs());
+  const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
+  const { data, isLoading, isError, error } = useDrd(periode, true);
+
+  const toInt = (s?: string | number) => {
+    if (typeof s === 'number') return s;
+    const n = Number(s);
+    return Number.isNaN(n) ? 0 : n;
+  };
+  const toFloat = (s?: string | number) => {
+    if (typeof s === 'number') return s;
+    const n = parseFloat(String(s ?? '0'));
+    return Number.isNaN(n) ? 0 : n;
+  };
+
+  const rows: Row[] = React.useMemo(() => {
+    const items = data?.data ?? [];
+    return items.map((it, i) => ({
+      id: it.id,
+      no: i + 1,
+      golongan: it.nama,
+      wilayah: it.wilayah,
+      pelanggan_total: toInt(it.totalpel),
+      pelanggan_aktif: toInt(it.jmlaktif),
+      pelanggan_pasif: toInt(it.jmlpelpasif),
+      pelanggan_m3: toInt(it.jmlm3),
+      tagihan_harga_air: toInt(it.harga_air),
+      tagihan_administrasi: toInt(it.administrasi),
+      tagihan_data_meter: toInt(it.danameter),
+      total_tagihan: toInt(it.total_tagihan),
+      rata_m3: toFloat(it.rata2m3),
+      rata_rupiah: toFloat(it.rata2rp),
+    }));
+  }, [data]);
+
+  const { sum, avg } = React.useMemo(() => computeTotals(rows), [rows]);
 
   const pinnedBottom = React.useMemo(
     () => [
@@ -254,6 +270,7 @@ export default function Page() {
         golongan: 'Total',
         pelanggan_total: sum.pelanggan_total,
         pelanggan_aktif: sum.pelanggan_aktif,
+        wilayah: '',
         pelanggan_pasif: sum.pelanggan_pasif,
         pelanggan_m3: sum.pelanggan_m3,
         tagihan_harga_air: sum.tagihan_harga_air,
@@ -288,20 +305,49 @@ export default function Page() {
             sx={{ alignItems: 'center', mx: 3, pb: 5, mt: { xs: 8, md: 0 } }}
           >
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-                DRD
-              </Typography>
+              <Box sx={{ mb: 2 }}>
+                <Header current='drd' />
+              </Box>
+              <Box sx={{ mb: 1 }}>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <Box sx={{ mb: 1 }}>
+                    <DatePicker
+                      label='Periode'
+                      views={['year', 'month']}
+                      openTo='month'
+                      value={month}
+                      onChange={(newVal) => newVal && setMonth(newVal)}
+                      format='MMMM YYYY'
+                      slotProps={{
+                        textField: { size: 'small', sx: { width: 220 } },
+                      }}
+                    />
+                  </Box>
+                </LocalizationProvider>
+              </Box>
               <Box sx={{ height: 'auto', width: '100%' }}>
-                <DataGridPro
-                  rows={rows}
-                  columns={columns}
-                  columnGroupingModel={columnGroupingModel}
-                  density='compact'
-                  autoHeight
-                  disableRowSelectionOnClick
-                  hideFooter
-                  pinnedRows={{ bottom: pinnedBottom }}
-                />
+                {isLoading ? (
+                  <Box
+                    sx={{ py: 4, display: 'flex', justifyContent: 'center' }}
+                  >
+                    <CircularProgress size={24} />
+                  </Box>
+                ) : isError ? (
+                  <Alert severity='error'>
+                    {(error as Error)?.message || 'Gagal memuat data'}
+                  </Alert>
+                ) : (
+                  <DataGridPro
+                    rows={rows.length ? rows : demoRows}
+                    columns={columns}
+                    columnGroupingModel={columnGroupingModel}
+                    density='compact'
+                    autoHeight
+                    disableRowSelectionOnClick
+                    hideFooter
+                    pinnedRows={{ bottom: pinnedBottom }}
+                  />
+                )}
               </Box>
             </Box>
           </Stack>
