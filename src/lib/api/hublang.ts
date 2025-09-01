@@ -5,7 +5,7 @@ export interface PenerimaanParams {
   end_date: string;
   wil_id?: string;
   rayon_id?: string;
-  kec_id?: string; 
+  kec_id?: string;
   kel_id?: string;
 }
 
@@ -106,7 +106,7 @@ export function getKelurahan(kec_id: string) {
 
 export interface RekapDetailItem {
   id: number;
-  nama: string; 
+  nama: string;
   rekapBy: string;
   ttltagihan: string;
   jmlrek: string;
@@ -140,4 +140,33 @@ export interface RekapTotalSummary {
 export interface RekapData {
   detail: RekapDetailItem[];
   total: RekapTotalSummary;
+}
+
+export interface DrdItem {
+  id: number;
+  nama: string;
+  wilayah_id: string;
+  wilayah: string;
+  totalpel: number;
+  jmlpelpasif: string;
+  jmlaktif: string;
+  jmlm3: string;
+  harga_air: string;
+  danameter: string;
+  administrasi: string;
+  total_tagihan: string;
+  rata2m3: string;
+  rata2rp: string;
+  kodegol: string;
+}
+
+export interface DrdResponse {
+  status: string;
+  message: string;
+  data: DrdItem[];
+}
+
+export function getDrd(periode: string) {
+  const search = new URLSearchParams({ periode }).toString();
+  return apiFetch<DrdResponse>(`/api/hublang/drd?${search}`);
 }
