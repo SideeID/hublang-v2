@@ -15,15 +15,26 @@ const StyledBreadcrumbs = styled(Breadcrumbs)(({ theme }) => ({
   },
 }));
 
-export default function NavbarBreadcrumbs() {
+type NavbarBreadcrumbsProps = {
+  root?: React.ReactNode;
+  current?: React.ReactNode;
+};
+
+export default function NavbarBreadcrumbs({
+  root = 'Dashboard',
+  current = 'Home',
+}: NavbarBreadcrumbsProps) {
   return (
     <StyledBreadcrumbs
-      aria-label="breadcrumb"
-      separator={<NavigateNextRoundedIcon fontSize="small" />}
+      aria-label='breadcrumb'
+      separator={<NavigateNextRoundedIcon fontSize='small' />}
     >
-      <Typography variant="body1">Dashboard</Typography>
-      <Typography variant="body1" sx={{ color: 'text.primary', fontWeight: 600 }}>
-        Home
+      <Typography variant='body1'>{root}</Typography>
+      <Typography
+        variant='body1'
+        sx={{ color: 'text.primary', fontWeight: 600 }}
+      >
+        {current}
       </Typography>
     </StyledBreadcrumbs>
   );
