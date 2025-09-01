@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
@@ -23,6 +25,23 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu() {
+  const [userName, setUserName] = React.useState('Riley Carter');
+  const [userEmail, setUserEmail] = React.useState('riley@email.com');
+
+  React.useEffect(() => {
+    const getCookie = (name: string) =>
+      typeof document === 'undefined'
+        ? null
+        : document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(name + '='))
+            ?.split('=')[1] ?? null;
+    const name = getCookie('hublang_user');
+    const email = getCookie('hublang_email');
+    if (name) setUserName(decodeURIComponent(name));
+    if (email) setUserEmail(decodeURIComponent(email));
+  }, []);
+
   return (
     <Drawer
       variant='permanent'
@@ -75,7 +94,7 @@ export default function SideMenu() {
       >
         <Avatar
           sizes='small'
-          alt='Riley Carter'
+          alt={userName}
           src='/static/images/avatar/7.jpg'
           sx={{ width: 36, height: 36 }}
         />
@@ -84,10 +103,10 @@ export default function SideMenu() {
             variant='body2'
             sx={{ fontWeight: 500, lineHeight: '16px' }}
           >
-            Riley Carter
+            {userName}
           </Typography>
           <Typography variant='caption' sx={{ color: 'text.secondary' }}>
-            riley@email.com
+            {userEmail}
           </Typography>
         </Box>
         <OptionsMenu />

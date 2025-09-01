@@ -13,10 +13,30 @@ interface SideMenuMobileProps {
   toggleDrawer: (newOpen: boolean) => () => void;
 }
 
-export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobileProps) {
+export default function SideMenuMobile({
+  open,
+  toggleDrawer,
+}: SideMenuMobileProps) {
+  const [userName, setUserName] = React.useState('Riley Carter');
+  const [userEmail, setUserEmail] = React.useState('riley@email.com');
+
+  React.useEffect(() => {
+    const getCookie = (name: string) =>
+      typeof document === 'undefined'
+        ? null
+        : document.cookie
+            .split('; ')
+            .find((row) => row.startsWith(name + '='))
+            ?.split('=')[1] ?? null;
+    const name = getCookie('hublang_user');
+    const email = getCookie('hublang_email');
+    if (name) setUserName(decodeURIComponent(name));
+    if (email) setUserEmail(decodeURIComponent(email));
+  }, []);
+
   return (
     <Drawer
-      anchor="right"
+      anchor='right'
       open={open}
       onClose={toggleDrawer(false)}
       sx={{
@@ -33,20 +53,25 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
           height: '100%',
         }}
       >
-        <Stack direction="row" sx={{ p: 2, pb: 0, gap: 1 }}>
+        <Stack direction='row' sx={{ p: 2, pb: 0, gap: 1 }}>
           <Stack
-            direction="row"
+            direction='row'
             sx={{ gap: 1, alignItems: 'center', flexGrow: 1, p: 1 }}
           >
             <Avatar
-              sizes="small"
-              alt="Riley Carter"
-              src="/static/images/avatar/7.jpg"
+              sizes='small'
+              alt={userName}
+              src='/static/images/avatar/7.jpg'
               sx={{ width: 24, height: 24 }}
             />
-            <Typography component="p" variant="h6">
-              Riley Carter
-            </Typography>
+            <Stack>
+              <Typography component='p' variant='h6'>
+                {userName}
+              </Typography>
+              <Typography variant='caption' sx={{ color: 'text.secondary' }}>
+                {userEmail}
+              </Typography>
+            </Stack>
           </Stack>
         </Stack>
         <Divider />
@@ -55,7 +80,11 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
           <Divider />
         </Stack>
         <Stack sx={{ p: 2 }}>
-          <Button variant="outlined" fullWidth startIcon={<LogoutRoundedIcon />}>
+          <Button
+            variant='outlined'
+            fullWidth
+            startIcon={<LogoutRoundedIcon />}
+          >
             Logout
           </Button>
         </Stack>

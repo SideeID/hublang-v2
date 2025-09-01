@@ -84,21 +84,23 @@ export default function SignIn() {
     try {
       const res = await doLogin({ username, password });
       const token = res?.data?.token;
+      const user = res?.data?.user?.nama;
+      const email = res?.data?.user?.email;
       if (!token) throw new Error('Token tidak ditemukan');
+      if (!user) throw new Error('User tidak ditemukan');
+      if (!email) throw new Error('Email tidak ditemukan');
 
-      const cookieParts = [
-        `hublang_token=${token}`,
-        'Path=/',
-        'Max-Age=604800', // 7 days
-        'SameSite=Lax',
-      ];
+      const attrs = ['Path=/', 'Max-Age=604800', 'SameSite=Lax']; // 7 days
       if (
         typeof window !== 'undefined' &&
         window.location.protocol === 'https:'
       ) {
-        cookieParts.push('Secure');
+        attrs.push('Secure');
       }
-      document.cookie = cookieParts.join('; ');
+      const common = attrs.join('; ');
+      document.cookie = `hublang_token=${token}; ${common}`;
+      document.cookie = `hublang_user=${encodeURIComponent(user)}; ${common}`;
+      document.cookie = `hublang_email=${encodeURIComponent(email)}; ${common}`;
 
       router.replace('/dashboard');
     } catch (err) {
