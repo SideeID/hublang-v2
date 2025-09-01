@@ -70,7 +70,7 @@ export default function DateRangeFilter({
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: '100%' }}>
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
-          <Grid size={{ xs: 12, sm: 'auto' }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
             <DatePicker
               label='Tanggal awal'
               value={start}
@@ -79,10 +79,15 @@ export default function DateRangeFilter({
                 onStartChange(newValue);
                 if (newValue.isAfter(end)) onEndChange(newValue);
               }}
-              slotProps={{ textField: { size: 'small', sx: { width: 150 } } }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  sx: { width: { xs: '100%', sm: 150 } },
+                },
+              }}
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 'auto' }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
             <DatePicker
               label='Tanggal akhir'
               value={end}
@@ -91,12 +96,17 @@ export default function DateRangeFilter({
                 onEndChange(newValue);
                 if (newValue.isBefore(start)) onStartChange(newValue);
               }}
-              slotProps={{ textField: { size: 'small', sx: { width: 150 } } }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  sx: { width: { xs: '100%', sm: 150 } },
+                },
+              }}
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl size='small' sx={{ minWidth: 160 }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
+            <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
               <InputLabel id='wilayah-label'>Wilayah</InputLabel>
               <Select
                 labelId='wilayah-label'
@@ -115,8 +125,8 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl size='small' sx={{ minWidth: 160 }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
+            <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
               <InputLabel id='kecamatan-label'>Kecamatan</InputLabel>
               <Select
                 labelId='kecamatan-label'
@@ -135,10 +145,11 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
             <FormControl
               size='small'
-              sx={{ minWidth: 160 }}
+              fullWidth
+              sx={{ minWidth: { sm: 160 } }}
               disabled={!kecamatanId}
             >
               <InputLabel id='kelurahan-label'>Kelurahan</InputLabel>
@@ -159,10 +170,11 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
+          <Grid size={{ xs: 6, sm: 'auto' }}>
             <FormControl
               size='small'
-              sx={{ minWidth: 160 }}
+              fullWidth
+              sx={{ minWidth: { sm: 160 } }}
               disabled={!wilayahId}
             >
               <InputLabel id='rayon-label'>Wilayah Rayon</InputLabel>
