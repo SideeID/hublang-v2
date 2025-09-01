@@ -2,8 +2,12 @@ import * as React from 'react';
 import Stack from '@mui/material/Stack';
 import NavbarBreadcrumbs from './NavbarBreadcrumbs';
 
+type HeaderProps = {
+  root?: React.ReactNode;
+  current?: React.ReactNode;
+};
 
-export default function Header() {
+export default function Header({ root, current }: HeaderProps) {
   return (
     <Stack
       direction='row'
@@ -17,7 +21,7 @@ export default function Header() {
       }}
       spacing={2}
     >
-      <NavbarBreadcrumbs />
+      <NavbarBreadcrumbs root={root} current={current} />
     </Stack>
   );
 }
