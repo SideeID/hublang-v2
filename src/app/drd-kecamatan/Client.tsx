@@ -28,6 +28,7 @@ import Alert from '@mui/material/Alert';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import Typography from '@mui/material/Typography';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -39,20 +40,16 @@ const xThemeComponents = {
 type Row = {
   id: number;
   no: number;
-  golongan: string;
+  kecamatan: string; // name column label changed
   wilayah: string;
-  // Pelanggan
   pelanggan_total: number;
   pelanggan_aktif: number;
   pelanggan_pasif: number;
   pelanggan_m3: number;
-  // Tagihan
   tagihan_harga_air: number;
   tagihan_administrasi: number;
   tagihan_data_meter: number;
-  // Total Tagihan (single column spans 2 header rows)
   total_tagihan: number;
-  // Rata-rata
   rata_m3: number;
   rata_rupiah: number;
 };
@@ -64,23 +61,17 @@ const columns: GridColDef<Row>[] = [
     width: 70,
     align: 'right',
     headerAlign: 'right',
-    colSpan: (params) => (params.row?.id === -1 ? 2 : undefined),
-    renderCell: (params) => (params.row?.id === -1 ? 'Total' : params.value),
+    colSpan: (p) => (p.row?.id === -1 ? 2 : undefined),
+    renderCell: (p) => (p.row?.id === -1 ? 'Total' : p.value),
   },
   {
-    field: 'golongan',
-    headerName: 'GOLONGAN',
-    minWidth: 140,
+    field: 'kecamatan',
+    headerName: 'KECAMATAN',
+    minWidth: 180,
     flex: 1,
-    colSpan: (params) => (params.row?.id === -1 ? 0 : undefined),
+    colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
-  {
-    field: 'wilayah',
-    headerName: 'WILAYAH',
-    minWidth: 160,
-    flex: 1,
-  },
-  // Pelanggan group
+  { field: 'wilayah', headerName: 'WILAYAH', minWidth: 160, flex: 1 },
   {
     field: 'pelanggan_total',
     headerName: 'Total',
@@ -113,7 +104,6 @@ const columns: GridColDef<Row>[] = [
     align: 'right',
     headerAlign: 'right',
   },
-  // Tagihan group
   {
     field: 'tagihan_harga_air',
     headerName: 'Harga Air',
@@ -138,7 +128,6 @@ const columns: GridColDef<Row>[] = [
     align: 'right',
     headerAlign: 'right',
   },
-  // Total Tagihan single column
   {
     field: 'total_tagihan',
     headerName: 'TOTAL TAGIHAN',
@@ -147,7 +136,6 @@ const columns: GridColDef<Row>[] = [
     align: 'right',
     headerAlign: 'right',
   },
-  // Rata-rata group
   {
     field: 'rata_m3',
     headerName: 'M3',
@@ -222,7 +210,7 @@ function computeTotals(data: Row[]) {
   };
 }
 
-export default function DrdClient() {
+export default function Client() {
   const [month, setMonth] = React.useState(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const { data, isLoading, isError, error } = useDrd(periode, true);
@@ -238,49 +226,33 @@ export default function DrdClient() {
     return Number.isNaN(n) ? 0 : n;
   };
 
-  const rows: Row[] = React.useMemo(() => {
+  const grouped = React.useMemo(() => {
     const items = data?.data ?? [];
-    return items.map((it, i) => ({
-      id: it.id,
-      no: i + 1,
-      golongan: it.nama,
-      wilayah: it.wilayah,
-      pelanggan_total: toInt(it.totalpel),
-      pelanggan_aktif: toInt(it.jmlaktif),
-      pelanggan_pasif: toInt(it.jmlpelpasif),
-      pelanggan_m3: toInt(it.jmlm3),
-      tagihan_harga_air: toInt(it.harga_air),
-      tagihan_administrasi: toInt(it.administrasi),
-      tagihan_data_meter: toInt(it.danameter),
-      total_tagihan: toInt(it.total_tagihan),
-      rata_m3: toFloat(it.rata2m3),
-      rata_rupiah: toFloat(it.rata2rp),
-    }));
+    const map = new Map<string, Row[]>();
+    items.forEach((it) => {
+      const key = it.wilayah || 'Tanpa Wilayah';
+      const arr = map.get(key) ?? [];
+      const row: Row = {
+        id: it.id,
+        no: arr.length + 1,
+        kecamatan: it.nama,
+        wilayah: it.wilayah,
+        pelanggan_total: toInt(it.totalpel),
+        pelanggan_aktif: toInt(it.jmlaktif),
+        pelanggan_pasif: toInt(it.jmlpelpasif),
+        pelanggan_m3: toInt(it.jmlm3),
+        tagihan_harga_air: toInt(it.harga_air),
+        tagihan_administrasi: toInt(it.administrasi),
+        tagihan_data_meter: toInt(it.danameter),
+        total_tagihan: toInt(it.total_tagihan),
+        rata_m3: toFloat(it.rata2m3),
+        rata_rupiah: toFloat(it.rata2rp),
+      };
+      arr.push(row);
+      map.set(key, arr);
+    });
+    return map;
   }, [data]);
-
-  const { sum, avg } = React.useMemo(() => computeTotals(rows), [rows]);
-
-  const pinnedBottom = React.useMemo(
-    () => [
-      {
-        id: -1,
-        no: 0,
-        golongan: 'Total',
-        pelanggan_total: sum.pelanggan_total,
-        pelanggan_aktif: sum.pelanggan_aktif,
-        wilayah: '',
-        pelanggan_pasif: sum.pelanggan_pasif,
-        pelanggan_m3: sum.pelanggan_m3,
-        tagihan_harga_air: sum.tagihan_harga_air,
-        tagihan_administrasi: sum.tagihan_administrasi,
-        tagihan_data_meter: sum.tagihan_data_meter,
-        total_tagihan: sum.total_tagihan,
-        rata_m3: avg.rata_m3,
-        rata_rupiah: avg.rata_rupiah,
-      } as unknown as Row,
-    ],
-    [sum, avg],
-  );
 
   return (
     <AppTheme themeComponents={xThemeComponents}>
@@ -304,7 +276,7 @@ export default function DrdClient() {
           >
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
               <Box sx={{ mb: 2 }}>
-                <Header current='drd' />
+                <Header current='Ikhtisar Rekening By IKK (Kecamatan)' />
               </Box>
               <Box sx={{ mb: 1 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -314,7 +286,7 @@ export default function DrdClient() {
                       views={['year', 'month']}
                       openTo='month'
                       value={month}
-                      onChange={(newVal) => newVal && setMonth(newVal)}
+                      onChange={(v) => v && setMonth(v)}
                       format='MMMM YYYY'
                       slotProps={{
                         textField: { size: 'small', sx: { width: 220 } },
@@ -323,34 +295,57 @@ export default function DrdClient() {
                   </Box>
                 </LocalizationProvider>
               </Box>
-              <Box sx={{ height: 'auto', width: '100%' }}>
-                {isLoading ? (
-                  <Box
-                    sx={{ py: 4, display: 'flex', justifyContent: 'center' }}
-                  >
-                    <CircularProgress size={24} />
-                  </Box>
-                ) : isError ? (
-                  <Alert severity='error'>
-                    {(error as Error)?.message || 'Gagal memuat data'}
-                  </Alert>
-                ) : rows.length === 0 ? (
-                  <Alert severity='info'>
-                    Tidak ada data untuk periode ini.
-                  </Alert>
-                ) : (
-                  <DataGridPro
-                    rows={rows}
-                    columns={columns}
-                    columnGroupingModel={columnGroupingModel}
-                    density='compact'
-                    autoHeight
-                    disableRowSelectionOnClick
-                    hideFooter
-                    pinnedRows={{ bottom: pinnedBottom }}
-                  />
-                )}
-              </Box>
+
+              {isLoading ? (
+                <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+                  <CircularProgress size={24} />
+                </Box>
+              ) : isError ? (
+                <Alert severity='error'>
+                  {(error as Error)?.message || 'Gagal memuat data'}
+                </Alert>
+              ) : Array.from(grouped.entries()).length === 0 ? (
+                <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
+              ) : (
+                Array.from(grouped.entries()).map(([wilayah, rows]) => {
+                  const { sum, avg } = computeTotals(rows);
+                  const pinnedBottom = [
+                    {
+                      id: -1,
+                      no: 0,
+                      kecamatan: 'Total',
+                      wilayah: '',
+                      pelanggan_total: sum.pelanggan_total,
+                      pelanggan_aktif: sum.pelanggan_aktif,
+                      pelanggan_pasif: sum.pelanggan_pasif,
+                      pelanggan_m3: sum.pelanggan_m3,
+                      tagihan_harga_air: sum.tagihan_harga_air,
+                      tagihan_administrasi: sum.tagihan_administrasi,
+                      tagihan_data_meter: sum.tagihan_data_meter,
+                      total_tagihan: sum.total_tagihan,
+                      rata_m3: avg.rata_m3,
+                      rata_rupiah: avg.rata_rupiah,
+                    } as unknown as Row,
+                  ];
+                  return (
+                    <Box key={wilayah} sx={{ mb: 3 }}>
+                      <Typography variant='h6' sx={{ mb: 1 }}>
+                        {wilayah}
+                      </Typography>
+                      <DataGridPro
+                        rows={rows}
+                        columns={columns}
+                        columnGroupingModel={columnGroupingModel}
+                        density='compact'
+                        autoHeight
+                        disableRowSelectionOnClick
+                        hideFooter
+                        pinnedRows={{ bottom: pinnedBottom }}
+                      />
+                    </Box>
+                  );
+                })
+              )}
             </Box>
           </Stack>
         </Box>

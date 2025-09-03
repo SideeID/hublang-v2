@@ -5,14 +5,14 @@
       "command": "npx",
       "args": ["-y", "@mui/mcp@latest"]
     },
-    "Hublang": {
+    "Hublang-v4": {
       "command": "cmd",
       "args": [
         "/c",
         "npx",
         "-y",
         "apidog-mcp-server@latest",
-        "--site-id=756495"
+        "--site-id=756637"
       ]
     }
   }
