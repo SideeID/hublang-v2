@@ -12,23 +12,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const mainListItems = [
-  { text: 'Penerimaan', icon: <HomeRoundedIcon />, href: '/penerimaan' },
+  { text: 'Penerimaan Air', icon: <HomeRoundedIcon />, href: '/penerimaan' },
   { text: 'DRD', icon: <AnalyticsRoundedIcon />, href: '/drd' },
-  {
-    text: 'Ikhtisar Rekening By IKK (Golongan)',
-    icon: <AnalyticsRoundedIcon />,
-    href: '/drd-golongan',
-  },
-  {
-    text: 'Ikhtisar Rekening By IKK (Kecamatan)',
-    icon: <AnalyticsRoundedIcon />,
-    href: '/drd-kecamatan',
-  },
-  {
-    text: 'Ikhtisar Rekening By IKK (Kelurahan)',
-    icon: <AnalyticsRoundedIcon />,
-    href: '/drd-kelurahan',
-  },
 ];
 
 export default function MenuContent() {

@@ -10,6 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { Dayjs } from 'dayjs';
+import Alert from '@mui/material/Alert';
 import { useWilayah } from '@/hooks/useWilayah';
 import { useRayon } from '@/hooks/useRayon';
 import { useKecamatan } from '@/hooks/useKecamatan';
@@ -66,18 +67,48 @@ export default function DateRangeFilter({
     onRayonChange?.(event.target.value);
   };
 
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+
+  const sameMonth = (a: Dayjs, b: Dayjs) => {
+    return a.month() === b.month() && a.year() === b.year();
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: '100%' }}>
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
+          {alertOpen && (
+            <Grid size={{ xs: 12 }}>
+              <Alert severity='error' onClose={() => setAlertOpen(false)}>
+                {alertMessage}
+              </Alert>
+            </Grid>
+          )}
           <Grid size={{ xs: 6, sm: 'auto' }}>
             <DatePicker
               label='Tanggal awal'
               value={start}
               onChange={(newValue) => {
                 if (!newValue) return;
-                onStartChange(newValue);
-                if (newValue.isAfter(end)) onEndChange(newValue);
+                const resultingStart = newValue;
+                let resultingEnd = end;
+
+                if (!sameMonth(resultingStart, resultingEnd)) {
+                  setAlertMessage(
+                    'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
+                  );
+                  setAlertOpen(true);
+                  resultingEnd = resultingStart.endOf('month');
+                  onEndChange(resultingEnd);
+                }
+
+                if (resultingStart.isAfter(resultingEnd)) {
+                  resultingEnd = resultingStart;
+                  onEndChange(resultingEnd);
+                }
+
+                onStartChange(resultingStart);
               }}
               slotProps={{
                 textField: {
@@ -87,14 +118,30 @@ export default function DateRangeFilter({
               }}
             />
           </Grid>
+
           <Grid size={{ xs: 6, sm: 'auto' }}>
             <DatePicker
               label='Tanggal akhir'
               value={end}
               onChange={(newValue) => {
                 if (!newValue) return;
-                onEndChange(newValue);
-                if (newValue.isBefore(start)) onStartChange(newValue);
+                let resultingStart = start;
+                let resultingEnd = newValue;
+
+                if (resultingEnd.isBefore(resultingStart)) {
+                  resultingStart = resultingEnd;
+                  onStartChange(resultingStart);
+                }
+
+                if (!sameMonth(resultingStart, resultingEnd)) {
+                  setAlertMessage(
+                    'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
+                  );
+                  setAlertOpen(true);
+                  resultingEnd = resultingStart.endOf('month');
+                }
+
+                onEndChange(resultingEnd);
               }}
               slotProps={{
                 textField: {
@@ -119,6 +166,31 @@ export default function DateRangeFilter({
                 {(wilayahResp?.data || []).map((w) => (
                   <MenuItem key={w.id} value={String(w.id)}>
                     {w.nama}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid size={{ xs: 6, sm: 'auto' }}>
+            <FormControl
+              size='small'
+              fullWidth
+              sx={{ minWidth: { sm: 160 } }}
+              disabled={!wilayahId}
+            >
+              <InputLabel id='rayon-label'>Wilayah Rayon</InputLabel>
+              <Select
+                labelId='rayon-label'
+                id='rayon'
+                value={rayonId}
+                label='Wilayah Rayon'
+                onChange={handleRayonChange}
+              >
+                <MenuItem value=''>Semua Rayon</MenuItem>
+                {(rayonResp?.data || []).map((r) => (
+                  <MenuItem key={r.id} value={String(r.id)}>
+                    {r.nama}
                   </MenuItem>
                 ))}
               </Select>
@@ -164,31 +236,6 @@ export default function DateRangeFilter({
                 {(kelResp?.data || []).map((kel) => (
                   <MenuItem key={kel.id} value={String(kel.id)}>
                     {kel.nama}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 6, sm: 'auto' }}>
-            <FormControl
-              size='small'
-              fullWidth
-              sx={{ minWidth: { sm: 160 } }}
-              disabled={!wilayahId}
-            >
-              <InputLabel id='rayon-label'>Wilayah Rayon</InputLabel>
-              <Select
-                labelId='rayon-label'
-                id='rayon'
-                value={rayonId}
-                label='Wilayah Rayon'
-                onChange={handleRayonChange}
-              >
-                <MenuItem value=''>Semua Rayon</MenuItem>
-                {(rayonResp?.data || []).map((r) => (
-                  <MenuItem key={r.id} value={String(r.id)}>
-                    {r.nama}
                   </MenuItem>
                 ))}
               </Select>
