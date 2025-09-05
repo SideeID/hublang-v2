@@ -7,13 +7,20 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Stack from '@mui/material/Stack';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import ReceiptLongRoundedIcon from '@mui/icons-material/ReceiptLongRounded';
 import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const mainListItems = [
   { text: 'Penerimaan Air', icon: <HomeRoundedIcon />, href: '/penerimaan' },
+  {
+    text: 'Penerimaan Petugas Tagih',
+    icon: <ReceiptLongRoundedIcon />,
+    href: '/penerimaan-tagih',
+  },
   { text: 'DRD', icon: <AnalyticsRoundedIcon />, href: '/drd' },
+  { text: 'Penerimaan Non Air', icon: <ReceiptLongRoundedIcon />, href: '/non-air' },
 ];
 
 export default function MenuContent() {
