@@ -70,6 +70,15 @@ export default function DateRangeFilter({
   const [alertOpen, setAlertOpen] = React.useState(false);
   const [alertMessage, setAlertMessage] = React.useState('');
 
+  React.useEffect(() => {
+    if (alertOpen) {
+      const timer = setTimeout(() => {
+        setAlertOpen(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertOpen]);
+
   const sameMonth = (a: Dayjs, b: Dayjs) => {
     return a.month() === b.month() && a.year() === b.year();
   };
@@ -77,14 +86,14 @@ export default function DateRangeFilter({
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box sx={{ width: '100%' }}>
+        {alertOpen && (
+          <Box mb={2}>
+            <Alert severity='warning' onClose={() => setAlertOpen(false)}>
+              {alertMessage}
+            </Alert>
+          </Box>
+        )}
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
-          {alertOpen && (
-            <Grid size={{ xs: 12 }}>
-              <Alert severity='error' onClose={() => setAlertOpen(false)}>
-                {alertMessage}
-              </Alert>
-            </Grid>
-          )}
           <Grid size={{ xs: 6, sm: 'auto' }}>
             <DatePicker
               label='Tanggal awal'
