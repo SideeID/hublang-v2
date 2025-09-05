@@ -37,7 +37,13 @@ type Row = {
 };
 
 const columns: GridColDef<Row>[] = [
-  { field: 'kasir', headerName: 'Kasir', minWidth: 140, flex: 1 },
+  {
+    field: 'kasir',
+    headerName: 'Kasir',
+    minWidth: 140,
+    flex: 1,
+    headerAlign: 'center',
+  },
   // {
   //   field: 'jumlahRayon',
   //   headerName: 'Jumlah Rayon',
@@ -53,7 +59,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'tdrd_lancar_jumlah',
@@ -61,7 +67,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Total DRD Penagihan - Tunggakan
   {
@@ -70,7 +76,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'tdrd_tunggakan_jumlah',
@@ -78,7 +84,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Total DRD Penagihan - Total
   {
@@ -87,7 +93,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'tdrd_total_jumlah',
@@ -95,7 +101,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Lancar
   {
@@ -104,7 +110,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'lunas_lancar_jumlah',
@@ -112,7 +118,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Tunggakan
   {
@@ -121,7 +127,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'lunas_tunggakan_jumlah',
@@ -129,7 +135,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Total
   {
@@ -138,7 +144,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 100,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   {
     field: 'lunas_total_jumlah',
@@ -146,7 +152,7 @@ const columns: GridColDef<Row>[] = [
     type: 'number',
     width: 120,
     align: 'right',
-    headerAlign: 'right',
+    headerAlign: 'center',
   },
   // Sisa DRD Penagihan - Lancar
   {
@@ -405,6 +411,42 @@ export default function CustomizedDataGrid({
               InputComponentProps: { variant: 'outlined', size: 'small' },
             },
           },
+        },
+      }}
+      sx={{
+        '& .MuiDataGrid-columnHeaderTitle': {
+          textAlign: 'center',
+        },
+        '& .MuiDataGrid-columnHeaderTitleContainer': {
+          justifyContent: 'center',
+        },
+        '& .MuiDataGrid-columnGroupHeaderTitle': {
+          textAlign: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+        '& .MuiDataGrid-columnGroupHeader': {
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        },
+
+        '& .MuiDataGrid-columnHeaders': {
+          borderBottom: '2px solid rgba(0,0,0,0.08)',
+        },
+        '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+          borderRight: '1px solid rgba(0,0,0,0.08)',
+          borderBottom: '1px solid rgba(0,0,0,0.08)',
+        },
+        '& .MuiDataGrid-row': {
+          border: '1px solid rgba(0,0,0,0.06)',
+        },
+        '& .MuiDataGrid-cell': {
+          border: '1px solid rgba(0,0,0,0.06)',
+        },
+        '& .MuiDataGrid-columnSeparator': {
+          display: 'none',
         },
       }}
     />
