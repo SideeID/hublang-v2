@@ -28,6 +28,8 @@ import Alert from '@mui/material/Alert';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import DrdMobileList from '../../components/dashboard/components/DrdMobileList';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -226,6 +228,7 @@ export default function DrdClient() {
   const [month, setMonth] = React.useState(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const { data, isLoading, isError, error } = useDrd(periode, true);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   const toInt = (s?: string | number) => {
     if (typeof s === 'number') return s;
@@ -280,6 +283,16 @@ export default function DrdClient() {
       } as unknown as Row,
     ],
     [sum, avg],
+  );
+
+  const mobileRows = React.useMemo(
+    () =>
+      rows.map((r) => ({
+        id: r.id,
+        wilayah: r.golongan,
+        total_tagihan: r.total_tagihan,
+      })),
+    [rows],
   );
 
   return (
@@ -338,6 +351,8 @@ export default function DrdClient() {
                   <Alert severity='info'>
                     Tidak ada data untuk periode ini.
                   </Alert>
+                ) : isMobile ? (
+                  <DrdMobileList rows={mobileRows} />
                 ) : (
                   <DataGridPro
                     rows={rows}
@@ -348,6 +363,42 @@ export default function DrdClient() {
                     disableRowSelectionOnClick
                     hideFooter
                     pinnedRows={{ bottom: pinnedBottom }}
+                    sx={{
+                      '& .MuiDataGrid-columnHeaderTitle': {
+                        textAlign: 'center',
+                      },
+                      '& .MuiDataGrid-columnHeaderTitleContainer': {
+                        justifyContent: 'center',
+                      },
+                      '& .MuiDataGrid-columnGroupHeaderTitle': {
+                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                      '& .MuiDataGrid-columnGroupHeader': {
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+
+                      '& .MuiDataGrid-columnHeaders': {
+                        borderBottom: '2px solid rgba(0,0,0,0.08)',
+                      },
+                      '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                        borderRight: '1px solid rgba(0,0,0,0.08)',
+                        borderBottom: '1px solid rgba(0,0,0,0.08)',
+                      },
+                      '& .MuiDataGrid-row': {
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      },
+                      '& .MuiDataGrid-cell': {
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        display: 'none',
+                      },
+                    }}
                   />
                 )}
               </Box>
