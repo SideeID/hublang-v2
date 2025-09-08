@@ -204,7 +204,7 @@ export default function DateRangeFilter({
                 <MenuItem value=''>Semua Rayon</MenuItem>
                 {(rayonResp?.data || []).map((r) => (
                   <MenuItem key={r.id} value={String(r.id)}>
-                    {r.nama}
+                    {r.kode_rayon ? `${r.kode_rayon} - ${r.nama}` : r.nama}
                   </MenuItem>
                 ))}
               </Select>
