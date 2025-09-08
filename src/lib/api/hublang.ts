@@ -156,6 +156,19 @@ export interface RekapResponse {
   };
 }
 
+export interface TimTagihItem {
+  id: number | string;
+  nama: string;
+}
+export interface TimTagihResponse {
+  status: string;
+  message: string;
+  data: TimTagihItem[];
+}
+export function getTimTagih() {
+  return apiFetch<TimTagihResponse>(`/api/filter/timtagih`);
+}
+
 export interface DrdItem {
   id: number;
   nama: string;
@@ -185,7 +198,16 @@ export function getDrd(periode: string) {
   return apiFetch<DrdResponse>(`/api/hublang/drd?${search}`);
 }
 
-export function getRekap(periode: string) {
-  const search = new URLSearchParams({ periode }).toString();
+export interface RekapParams {
+  periode: string;
+  rekfrom?: string;
+  rekto?: string;
+}
+
+export function getRekap(params: RekapParams) {
+  const entries = Object.entries(params).filter(
+    ([, v]) => v !== undefined && v !== '',
+  );
+  const search = new URLSearchParams(entries as [string, string][]).toString();
   return apiFetch<RekapResponse>(`/api/hublang/rekap?${search}`);
 }

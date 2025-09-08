@@ -10,7 +10,9 @@ import SideMenu from '@/components/dashboard/components/SideMenu';
 import AppNavbar from '@/components/dashboard/components/AppNavbar';
 import DateRangeFilter from '@/components/dashboard/components/DateRangeFilter';
 import CustomizedDataGrid from '@/components/dashboard/components/CustomizedDataGrid';
+import TagihFilters from '@/components/dashboard/components/TagihFilters';
 import { useRekap } from '@/hooks/useRekap';
+import { useTimTagih } from '@/hooks/useTimTagih';
 import type { RekapDetailItem } from '@/lib/api/hublang';
 import {
   chartsCustomizations,
@@ -34,10 +36,30 @@ export default function Client() {
   const [rayonId, setRayonId] = React.useState<string>('');
   const [kecamatanId, setKecamatanId] = React.useState<string>('');
   const [kelurahanId, setKelurahanId] = React.useState<string>('');
+  const [minJmlrek, setMinJmlrek] = React.useState<number | undefined>();
+  const [maxJmlrek, setMaxJmlrek] = React.useState<number | undefined>();
+  const [timTagih, setTimTagih] = React.useState<string>('');
 
   const periode = startD.format('YYYYMM');
 
-  const { data } = useRekap(periode, true);
+  const { data: timTagihResp } = useTimTagih(true);
+  const teamOptions = React.useMemo(
+    () =>
+      (timTagihResp?.data ?? []).map((t) => ({
+        id: String(t.id),
+        label: t.nama,
+      })),
+    [timTagihResp],
+  );
+
+  const { data } = useRekap(
+    {
+      periode,
+      rekfrom: minJmlrek !== undefined ? String(minJmlrek) : undefined,
+      rekto: maxJmlrek !== undefined ? String(maxJmlrek) : undefined,
+    },
+    true,
+  );
 
   const toNum = (s?: string) => {
     const n = Number(s);
@@ -103,8 +125,17 @@ export default function Client() {
 
   const kasirDetail = data?.data?.kasir?.detail ?? [];
   const loketDetail = data?.data?.loket?.detail ?? [];
-  const kasirRows = mapDetailToRow(kasirDetail as RekapDetailItem[]);
-  const loketRows = mapDetailToRow(loketDetail as RekapDetailItem[]);
+  const kasirRowsAll = mapDetailToRow(kasirDetail as RekapDetailItem[]);
+  const loketRowsAll = mapDetailToRow(loketDetail as RekapDetailItem[]);
+
+  const passRange = (jml: number) => {
+    if (minJmlrek !== undefined && jml < minJmlrek) return false;
+    if (maxJmlrek !== undefined && jml > maxJmlrek) return false;
+    return true;
+  };
+
+  const kasirRows = kasirRowsAll.filter((r) => passRange(r.tdrd_total_lbr));
+  const loketRows = loketRowsAll.filter((r) => passRange(r.tdrd_total_lbr));
 
   return (
     <AppTheme themeComponents={xThemeComponents}>
@@ -136,6 +167,17 @@ export default function Client() {
               }}
               kelurahanId={kelurahanId}
               onKelurahanChange={setKelurahanId}
+            />
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <TagihFilters
+              minJmlrek={minJmlrek}
+              maxJmlrek={maxJmlrek}
+              onMinJmlrekChange={setMinJmlrek}
+              onMaxJmlrekChange={setMaxJmlrek}
+              timTagih={timTagih}
+              onTimTagihChange={setTimTagih}
+              teamOptions={teamOptions}
             />
           </Box>
 
