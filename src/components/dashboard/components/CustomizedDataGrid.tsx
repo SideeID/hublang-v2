@@ -317,6 +317,62 @@ const columnGroupingModel: GridColumnGroupingModel = [
   },
 ];
 
+function computeTotals(data: Row[]) {
+  const sum = {
+    tdrd_lancar_lbr: 0,
+    tdrd_lancar_jumlah: 0,
+    tdrd_tunggakan_lbr: 0,
+    tdrd_tunggakan_jumlah: 0,
+    tdrd_total_lbr: 0,
+    tdrd_total_jumlah: 0,
+    lunas_lancar_lbr: 0,
+    lunas_lancar_jumlah: 0,
+    lunas_tunggakan_lbr: 0,
+    lunas_tunggakan_jumlah: 0,
+    lunas_total_lbr: 0,
+    lunas_total_jumlah: 0,
+    sisa_lancar_lbr: 0,
+    sisa_lancar_jumlah: 0,
+    sisa_tunggakan_lbr: 0,
+    sisa_tunggakan_jumlah: 0,
+    sisa_total_lbr: 0,
+    sisa_total_jumlah: 0,
+  };
+
+  data.forEach((r) => {
+    sum.tdrd_lancar_lbr += r.tdrd_lancar_lbr;
+    sum.tdrd_lancar_jumlah += r.tdrd_lancar_jumlah;
+    sum.tdrd_tunggakan_lbr += r.tdrd_tunggakan_lbr;
+    sum.tdrd_tunggakan_jumlah += r.tdrd_tunggakan_jumlah;
+    sum.tdrd_total_lbr += r.tdrd_total_lbr;
+    sum.tdrd_total_jumlah += r.tdrd_total_jumlah;
+    sum.lunas_lancar_lbr += r.lunas_lancar_lbr;
+    sum.lunas_lancar_jumlah += r.lunas_lancar_jumlah;
+    sum.lunas_tunggakan_lbr += r.lunas_tunggakan_lbr;
+    sum.lunas_tunggakan_jumlah += r.lunas_tunggakan_jumlah;
+    sum.lunas_total_lbr += r.lunas_total_lbr;
+    sum.lunas_total_jumlah += r.lunas_total_jumlah;
+    sum.sisa_lancar_lbr += r.sisa_lancar_lbr;
+    sum.sisa_lancar_jumlah += r.sisa_lancar_jumlah;
+    sum.sisa_tunggakan_lbr += r.sisa_tunggakan_lbr;
+    sum.sisa_tunggakan_jumlah += r.sisa_tunggakan_jumlah;
+    sum.sisa_total_lbr += r.sisa_total_lbr;
+    sum.sisa_total_jumlah += r.sisa_total_jumlah;
+  });
+
+  const pct = (num: number, den: number) =>
+    den > 0 ? Math.round((num / den) * 1000) / 10 : 0;
+
+  return {
+    sum,
+    ef: {
+      ef_lancar: pct(sum.lunas_lancar_jumlah, sum.tdrd_lancar_jumlah),
+      ef_tunggakan: pct(sum.lunas_tunggakan_jumlah, sum.tdrd_tunggakan_jumlah),
+      ef_total: pct(sum.lunas_total_jumlah, sum.tdrd_total_jumlah),
+    },
+  };
+}
+
 const sampleRows: Row[] = [
   {
     id: 1,
@@ -377,6 +433,39 @@ export default function CustomizedDataGrid({
 }: {
   rows?: Row[];
 }) {
+  const pinnedBottom = React.useMemo(() => {
+    const data = rows ?? [];
+    if (!data.length) return [] as Row[];
+    const { sum, ef } = computeTotals(data);
+    return [
+      {
+        id: -1,
+        kasir: 'Total',
+        tdrd_lancar_lbr: sum.tdrd_lancar_lbr,
+        tdrd_lancar_jumlah: sum.tdrd_lancar_jumlah,
+        tdrd_tunggakan_lbr: sum.tdrd_tunggakan_lbr,
+        tdrd_tunggakan_jumlah: sum.tdrd_tunggakan_jumlah,
+        tdrd_total_lbr: sum.tdrd_total_lbr,
+        tdrd_total_jumlah: sum.tdrd_total_jumlah,
+        lunas_lancar_lbr: sum.lunas_lancar_lbr,
+        lunas_lancar_jumlah: sum.lunas_lancar_jumlah,
+        lunas_tunggakan_lbr: sum.lunas_tunggakan_lbr,
+        lunas_tunggakan_jumlah: sum.lunas_tunggakan_jumlah,
+        lunas_total_lbr: sum.lunas_total_lbr,
+        lunas_total_jumlah: sum.lunas_total_jumlah,
+        sisa_lancar_lbr: sum.sisa_lancar_lbr,
+        sisa_lancar_jumlah: sum.sisa_lancar_jumlah,
+        sisa_tunggakan_lbr: sum.sisa_tunggakan_lbr,
+        sisa_tunggakan_jumlah: sum.sisa_tunggakan_jumlah,
+        sisa_total_lbr: sum.sisa_total_lbr,
+        sisa_total_jumlah: sum.sisa_total_jumlah,
+        ef_lancar: ef.ef_lancar,
+        ef_tunggakan: ef.ef_tunggakan,
+        ef_total: ef.ef_total,
+      } as Row,
+    ];
+  }, [rows]);
+
   return (
     <DataGridPro
       density='compact'
@@ -386,6 +475,7 @@ export default function CustomizedDataGrid({
       columns={columns}
       columnGroupingModel={columnGroupingModel}
       columnGroupHeaderHeight={36}
+      pinnedRows={{ bottom: pinnedBottom }}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
       }
