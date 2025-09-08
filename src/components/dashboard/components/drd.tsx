@@ -8,12 +8,7 @@ import {
   type GridColumnGroupingModel,
 } from '@mui/x-data-grid-pro';
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Stack from '@mui/material/Stack';
-import SideMenu from './SideMenu';
-import AppNavbar from './AppNavbar';
-import Header from './Header';
 import AppTheme from '@/components/shared-theme/AppTheme';
 import {
   chartsCustomizations,
@@ -224,7 +219,7 @@ function computeTotals(data: Row[]) {
   };
 }
 
-export default function DrdClient() {
+export default function Drd() {
   const [month, setMonth] = React.useState(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const { data, isLoading, isError, error } = useDrd(periode, true);
@@ -298,113 +293,84 @@ export default function DrdClient() {
   return (
     <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ display: 'flex' }}>
-        <SideMenu />
-        <AppNavbar />
-        <Box
-          component='main'
-          sx={(theme) => ({
-            flexGrow: 1,
-            backgroundColor: theme.vars
-              ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-              : alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
-          })}
-        >
-          <Stack
-            spacing={2}
-            sx={{ alignItems: 'center', mx: 3, pb: 5, mt: { xs: 8, md: 0 } }}
-          >
-            <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              <Box sx={{ mb: 2 }}>
-                <Header current='drd' />
-              </Box>
-              <Box sx={{ mb: 1 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Box sx={{ mb: 1 }}>
-                    <DatePicker
-                      label='Periode'
-                      views={['year', 'month']}
-                      openTo='month'
-                      value={month}
-                      onChange={(newVal) => newVal && setMonth(newVal)}
-                      format='MMMM YYYY'
-                      slotProps={{
-                        textField: { size: 'small', sx: { width: 220 } },
-                      }}
-                    />
-                  </Box>
-                </LocalizationProvider>
-              </Box>
-              <Box sx={{ height: 'auto', width: '100%' }}>
-                {isLoading ? (
-                  <Box
-                    sx={{ py: 4, display: 'flex', justifyContent: 'center' }}
-                  >
-                    <CircularProgress size={24} />
-                  </Box>
-                ) : isError ? (
-                  <Alert severity='error'>
-                    {(error as Error)?.message || 'Gagal memuat data'}
-                  </Alert>
-                ) : rows.length === 0 ? (
-                  <Alert severity='info'>
-                    Tidak ada data untuk periode ini.
-                  </Alert>
-                ) : isMobile ? (
-                  <DrdMobileList rows={mobileRows} />
-                ) : (
-                  <DataGridPro
-                    rows={rows}
-                    columns={columns}
-                    columnGroupingModel={columnGroupingModel}
-                    density='compact'
-                    autoHeight
-                    disableRowSelectionOnClick
-                    hideFooter
-                    pinnedRows={{ bottom: pinnedBottom }}
-                    sx={{
-                      '& .MuiDataGrid-columnHeaderTitle': {
-                        textAlign: 'center',
-                      },
-                      '& .MuiDataGrid-columnHeaderTitleContainer': {
-                        justifyContent: 'center',
-                      },
-                      '& .MuiDataGrid-columnGroupHeaderTitle': {
-                        textAlign: 'center',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
-                      '& .MuiDataGrid-columnGroupHeader': {
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                      },
+      <Box sx={{ mb: 1 }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box sx={{ mb: 1 }}>
+            <DatePicker
+              label='Periode'
+              views={['year', 'month']}
+              openTo='month'
+              value={month}
+              onChange={(newVal) => newVal && setMonth(newVal)}
+              format='MMMM YYYY'
+              slotProps={{
+                textField: { size: 'small', sx: { width: 220 } },
+              }}
+            />
+          </Box>
+        </LocalizationProvider>
+      </Box>
+      <Box sx={{ height: 'auto', width: '100%' }}>
+        {isLoading ? (
+          <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress size={24} />
+          </Box>
+        ) : isError ? (
+          <Alert severity='error'>
+            {(error as Error)?.message || 'Gagal memuat data'}
+          </Alert>
+        ) : rows.length === 0 ? (
+          <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
+        ) : isMobile ? (
+          <DrdMobileList rows={mobileRows} />
+        ) : (
+          <DataGridPro
+            rows={rows}
+            columns={columns}
+            columnGroupingModel={columnGroupingModel}
+            density='compact'
+            autoHeight
+            disableRowSelectionOnClick
+            hideFooter
+            pinnedRows={{ bottom: pinnedBottom }}
+            sx={{
+              '& .MuiDataGrid-columnHeaderTitle': {
+                textAlign: 'center',
+              },
+              '& .MuiDataGrid-columnHeaderTitleContainer': {
+                justifyContent: 'center',
+              },
+              '& .MuiDataGrid-columnGroupHeaderTitle': {
+                textAlign: 'center',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+              '& .MuiDataGrid-columnGroupHeader': {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
 
-                      '& .MuiDataGrid-columnHeaders': {
-                        borderBottom: '2px solid rgba(0,0,0,0.08)',
-                      },
-                      '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
-                        borderRight: '1px solid rgba(0,0,0,0.08)',
-                        borderBottom: '1px solid rgba(0,0,0,0.08)',
-                      },
-                      '& .MuiDataGrid-row': {
-                        border: '1px solid rgba(0,0,0,0.06)',
-                      },
-                      '& .MuiDataGrid-cell': {
-                        border: '1px solid rgba(0,0,0,0.06)',
-                      },
-                      '& .MuiDataGrid-columnSeparator': {
-                        display: 'none',
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Box>
-          </Stack>
-        </Box>
+              '& .MuiDataGrid-columnHeaders': {
+                borderBottom: '2px solid rgba(0,0,0,0.08)',
+              },
+              '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                borderRight: '1px solid rgba(0,0,0,0.08)',
+                borderBottom: '1px solid rgba(0,0,0,0.08)',
+              },
+              '& .MuiDataGrid-row': {
+                border: '1px solid rgba(0,0,0,0.06)',
+              },
+              '& .MuiDataGrid-cell': {
+                border: '1px solid rgba(0,0,0,0.06)',
+              },
+              '& .MuiDataGrid-columnSeparator': {
+                display: 'none',
+              },
+            }}
+          />
+        )}
       </Box>
     </AppTheme>
   );

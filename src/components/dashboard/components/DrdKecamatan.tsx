@@ -8,12 +8,7 @@ import {
   type GridColumnGroupingModel,
 } from '@mui/x-data-grid-pro';
 import Box from '@mui/material/Box';
-import { alpha } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import Stack from '@mui/material/Stack';
-import SideMenu from './SideMenu';
-import AppNavbar from './AppNavbar';
-import Header from './Header';
 import AppTheme from '@/components/shared-theme/AppTheme';
 import {
   chartsCustomizations,
@@ -210,7 +205,7 @@ function computeTotals(data: Row[]) {
   };
 }
 
-export default function Client() {
+export default function DrdKecamatan() {
   const [month, setMonth] = React.useState(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const { data, isLoading, isError, error } = useDrd(periode, true);
@@ -257,98 +252,110 @@ export default function Client() {
   return (
     <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ display: 'flex' }}>
-        <SideMenu />
-        <AppNavbar />
-        <Box
-          component='main'
-          sx={(theme) => ({
-            flexGrow: 1,
-            backgroundColor: theme.vars
-              ? `rgba(${theme.vars.palette.background.defaultChannel} / 1)`
-              : alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
-          })}
-        >
-          <Stack
-            spacing={2}
-            sx={{ alignItems: 'center', mx: 3, pb: 5, mt: { xs: 8, md: 0 } }}
-          >
-            <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              <Box sx={{ mb: 2 }}>
-                <Header current='Ikhtisar Rekening By IKK (Kecamatan)' />
-              </Box>
-              <Box sx={{ mb: 1 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <Box sx={{ mb: 1 }}>
-                    <DatePicker
-                      label='Periode'
-                      views={['year', 'month']}
-                      openTo='month'
-                      value={month}
-                      onChange={(v) => v && setMonth(v)}
-                      format='MMMM YYYY'
-                      slotProps={{
-                        textField: { size: 'small', sx: { width: 220 } },
-                      }}
-                    />
-                  </Box>
-                </LocalizationProvider>
-              </Box>
+      <Box sx={{ mb: 1 }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Box sx={{ mb: 1 }}>
+            <DatePicker
+              label='Periode'
+              views={['year', 'month']}
+              openTo='month'
+              value={month}
+              onChange={(v) => v && setMonth(v)}
+              format='MMMM YYYY'
+              slotProps={{
+                textField: { size: 'small', sx: { width: 220 } },
+              }}
+            />
+          </Box>
+        </LocalizationProvider>
+      </Box>
+      <Box sx={{ height: 'auto', width: '100%' }}>
+        {isLoading ? (
+          <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress size={24} />
+          </Box>
+        ) : isError ? (
+          <Alert severity='error'>
+            {(error as Error)?.message || 'Gagal memuat data'}
+          </Alert>
+        ) : Array.from(grouped.entries()).length === 0 ? (
+          <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
+        ) : (
+          Array.from(grouped.entries()).map(([wilayah, rows]) => {
+            const { sum, avg } = computeTotals(rows);
+            const pinnedBottom = [
+              {
+                id: -1,
+                no: 0,
+                kecamatan: 'Total',
+                wilayah: '',
+                pelanggan_total: sum.pelanggan_total,
+                pelanggan_aktif: sum.pelanggan_aktif,
+                pelanggan_pasif: sum.pelanggan_pasif,
+                pelanggan_m3: sum.pelanggan_m3,
+                tagihan_harga_air: sum.tagihan_harga_air,
+                tagihan_administrasi: sum.tagihan_administrasi,
+                tagihan_data_meter: sum.tagihan_data_meter,
+                total_tagihan: sum.total_tagihan,
+                rata_m3: avg.rata_m3,
+                rata_rupiah: avg.rata_rupiah,
+              } as unknown as Row,
+            ];
+            return (
+              <Box key={wilayah} sx={{ mb: 3 }}>
+                <Typography variant='h6' sx={{ mb: 1 }}>
+                  {wilayah}
+                </Typography>
+                <DataGridPro
+                  rows={rows}
+                  columns={columns}
+                  columnGroupingModel={columnGroupingModel}
+                  density='compact'
+                  autoHeight
+                  disableRowSelectionOnClick
+                  hideFooter
+                  pinnedRows={{ bottom: pinnedBottom }}
+                  sx={{
+                    '& .MuiDataGrid-columnHeaderTitle': {
+                      textAlign: 'center',
+                    },
+                    '& .MuiDataGrid-columnHeaderTitleContainer': {
+                      justifyContent: 'center',
+                    },
+                    '& .MuiDataGrid-columnGroupHeaderTitle': {
+                      textAlign: 'center',
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                    '& .MuiDataGrid-columnGroupHeader': {
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
 
-              {isLoading ? (
-                <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
-                  <CircularProgress size={24} />
-                </Box>
-              ) : isError ? (
-                <Alert severity='error'>
-                  {(error as Error)?.message || 'Gagal memuat data'}
-                </Alert>
-              ) : Array.from(grouped.entries()).length === 0 ? (
-                <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
-              ) : (
-                Array.from(grouped.entries()).map(([wilayah, rows]) => {
-                  const { sum, avg } = computeTotals(rows);
-                  const pinnedBottom = [
-                    {
-                      id: -1,
-                      no: 0,
-                      kecamatan: 'Total',
-                      wilayah: '',
-                      pelanggan_total: sum.pelanggan_total,
-                      pelanggan_aktif: sum.pelanggan_aktif,
-                      pelanggan_pasif: sum.pelanggan_pasif,
-                      pelanggan_m3: sum.pelanggan_m3,
-                      tagihan_harga_air: sum.tagihan_harga_air,
-                      tagihan_administrasi: sum.tagihan_administrasi,
-                      tagihan_data_meter: sum.tagihan_data_meter,
-                      total_tagihan: sum.total_tagihan,
-                      rata_m3: avg.rata_m3,
-                      rata_rupiah: avg.rata_rupiah,
-                    } as unknown as Row,
-                  ];
-                  return (
-                    <Box key={wilayah} sx={{ mb: 3 }}>
-                      <Typography variant='h6' sx={{ mb: 1 }}>
-                        {wilayah}
-                      </Typography>
-                      <DataGridPro
-                        rows={rows}
-                        columns={columns}
-                        columnGroupingModel={columnGroupingModel}
-                        density='compact'
-                        autoHeight
-                        disableRowSelectionOnClick
-                        hideFooter
-                        pinnedRows={{ bottom: pinnedBottom }}
-                      />
-                    </Box>
-                  );
-                })
-              )}
-            </Box>
-          </Stack>
-        </Box>
+                    '& .MuiDataGrid-columnHeaders': {
+                      borderBottom: '2px solid rgba(0,0,0,0.08)',
+                    },
+                    '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                      borderRight: '1px solid rgba(0,0,0,0.08)',
+                      borderBottom: '1px solid rgba(0,0,0,0.08)',
+                    },
+                    '& .MuiDataGrid-row': {
+                      border: '1px solid rgba(0,0,0,0.06)',
+                    },
+                    '& .MuiDataGrid-cell': {
+                      border: '1px solid rgba(0,0,0,0.06)',
+                    },
+                    '& .MuiDataGrid-columnSeparator': {
+                      display: 'none',
+                    },
+                  }}
+                />
+              </Box>
+            );
+          })
+        )}
       </Box>
     </AppTheme>
   );

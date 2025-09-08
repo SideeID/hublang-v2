@@ -11,6 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { Dayjs } from 'dayjs';
 import Alert from '@mui/material/Alert';
+import NoSsr from '@mui/material/NoSsr';
 import { useWilayah } from '@/hooks/useWilayah';
 import { useRayon } from '@/hooks/useRayon';
 import { useKecamatan } from '@/hooks/useKecamatan';
@@ -95,70 +96,74 @@ export default function DateRangeFilter({
         )}
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
           <Grid size={{ xs: 6, sm: 'auto' }}>
-            <DatePicker
-              label='Tanggal awal'
-              value={start}
-              onChange={(newValue) => {
-                if (!newValue) return;
-                const resultingStart = newValue;
-                let resultingEnd = end;
+            <NoSsr>
+              <DatePicker
+                label='Tanggal awal'
+                value={start}
+                onChange={(newValue) => {
+                  if (!newValue) return;
+                  const resultingStart = newValue;
+                  let resultingEnd = end;
 
-                if (!sameMonth(resultingStart, resultingEnd)) {
-                  setAlertMessage(
-                    'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
-                  );
-                  setAlertOpen(true);
-                  resultingEnd = resultingStart.endOf('month');
-                  onEndChange(resultingEnd);
-                }
+                  if (!sameMonth(resultingStart, resultingEnd)) {
+                    setAlertMessage(
+                      'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
+                    );
+                    setAlertOpen(true);
+                    resultingEnd = resultingStart.endOf('month');
+                    onEndChange(resultingEnd);
+                  }
 
-                if (resultingStart.isAfter(resultingEnd)) {
-                  resultingEnd = resultingStart;
-                  onEndChange(resultingEnd);
-                }
+                  if (resultingStart.isAfter(resultingEnd)) {
+                    resultingEnd = resultingStart;
+                    onEndChange(resultingEnd);
+                  }
 
-                onStartChange(resultingStart);
-              }}
-              slotProps={{
-                textField: {
-                  size: 'small',
-                  sx: { width: { xs: '100%', sm: 150 } },
-                },
-              }}
-            />
+                  onStartChange(resultingStart);
+                }}
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    sx: { width: { xs: '100%', sm: 150 } },
+                  },
+                }}
+              />
+            </NoSsr>
           </Grid>
 
           <Grid size={{ xs: 6, sm: 'auto' }}>
-            <DatePicker
-              label='Tanggal akhir'
-              value={end}
-              onChange={(newValue) => {
-                if (!newValue) return;
-                let resultingStart = start;
-                let resultingEnd = newValue;
+            <NoSsr>
+              <DatePicker
+                label='Tanggal akhir'
+                value={end}
+                onChange={(newValue) => {
+                  if (!newValue) return;
+                  let resultingStart = start;
+                  let resultingEnd = newValue;
 
-                if (resultingEnd.isBefore(resultingStart)) {
-                  resultingStart = resultingEnd;
-                  onStartChange(resultingStart);
-                }
+                  if (resultingEnd.isBefore(resultingStart)) {
+                    resultingStart = resultingEnd;
+                    onStartChange(resultingStart);
+                  }
 
-                if (!sameMonth(resultingStart, resultingEnd)) {
-                  setAlertMessage(
-                    'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
-                  );
-                  setAlertOpen(true);
-                  resultingEnd = resultingStart.endOf('month');
-                }
+                  if (!sameMonth(resultingStart, resultingEnd)) {
+                    setAlertMessage(
+                      'Tanggal awal dan akhir beda bulan, tanggal akhir disesuaikan.',
+                    );
+                    setAlertOpen(true);
+                    resultingEnd = resultingStart.endOf('month');
+                  }
 
-                onEndChange(resultingEnd);
-              }}
-              slotProps={{
-                textField: {
-                  size: 'small',
-                  sx: { width: { xs: '100%', sm: 150 } },
-                },
-              }}
-            />
+                  onEndChange(resultingEnd);
+                }}
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    sx: { width: { xs: '100%', sm: 150 } },
+                  },
+                }}
+              />
+            </NoSsr>
           </Grid>
 
           <Grid size={{ xs: 6, sm: 'auto' }}>

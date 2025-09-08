@@ -156,7 +156,7 @@ export default function MonthlyComparisonGrids({
     for (const v of map.values()) {
       const thisSum = (v.this_lancar ?? 0) + (v.this_tunggakan ?? 0);
       const lastSum = (v.last_lancar ?? 0) + (v.last_tunggakan ?? 0);
-      v.selisih_rp = lastSum - thisSum; 
+      v.selisih_rp = lastSum - thisSum;
     }
     return Array.from(map.values());
   }, [thisMonth, lastMonth]);
