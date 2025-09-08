@@ -142,6 +142,20 @@ export interface RekapData {
   total: RekapTotalSummary;
 }
 
+export interface RekapBlock {
+  detail: RekapDetailItem[];
+  total: RekapTotalSummary;
+}
+
+export interface RekapResponse {
+  status: string;
+  message: string;
+  data: {
+    kasir: RekapBlock;
+    loket: RekapBlock;
+  };
+}
+
 export interface DrdItem {
   id: number;
   nama: string;
@@ -169,4 +183,9 @@ export interface DrdResponse {
 export function getDrd(periode: string) {
   const search = new URLSearchParams({ periode }).toString();
   return apiFetch<DrdResponse>(`/api/hublang/drd?${search}`);
+}
+
+export function getRekap(periode: string) {
+  const search = new URLSearchParams({ periode }).toString();
+  return apiFetch<RekapResponse>(`/api/hublang/rekap?${search}`);
 }

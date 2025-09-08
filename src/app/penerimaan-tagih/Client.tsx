@@ -10,7 +10,7 @@ import SideMenu from '@/components/dashboard/components/SideMenu';
 import AppNavbar from '@/components/dashboard/components/AppNavbar';
 import DateRangeFilter from '@/components/dashboard/components/DateRangeFilter';
 import CustomizedDataGrid from '@/components/dashboard/components/CustomizedDataGrid';
-import { usePenerimaan } from '@/hooks/usePenerimaan';
+import { useRekap } from '@/hooks/useRekap';
 import type { RekapDetailItem } from '@/lib/api/hublang';
 import {
   chartsCustomizations,
@@ -35,20 +35,9 @@ export default function Client() {
   const [kecamatanId, setKecamatanId] = React.useState<string>('');
   const [kelurahanId, setKelurahanId] = React.useState<string>('');
 
-  const start = startD.format('YYYY-MM-DD');
-  const end = endD.format('YYYY-MM-DD');
+  const periode = startD.format('YYYYMM');
 
-  const { data } = usePenerimaan(
-    {
-      start_date: start,
-      end_date: end,
-      wil_id: wilayahId || undefined,
-      rayon_id: rayonId || undefined,
-      kec_id: kecamatanId || undefined,
-      kel_id: kelurahanId || undefined,
-    },
-    true,
-  );
+  const { data } = useRekap(periode, true);
 
   const toNum = (s?: string) => {
     const n = Number(s);
@@ -58,59 +47,64 @@ export default function Client() {
   const pct = (num: number, den: number) =>
     den > 0 ? Math.round((num / den) * 1000) / 10 : 0;
 
-  const rekapDetail = data?.data?.rekap?.detail ?? [];
-  const rekapRows = (rekapDetail as RekapDetailItem[]).map((r, idx) => {
-    const tdrdLancarLbr = toNum(r.jmlrek_lancar);
-    const tdrdLancarJumlah = toNum(r.ttltagihan_lancar);
-    const tdrdTunggakanLbr = toNum(r.jmlrek_tunggakan);
-    const tdrdTunggakanJumlah = toNum(r.ttltagihan_tunggakan);
-    const tdrdTotalLbr = toNum(r.jmlrek);
-    const tdrdTotalJumlah = toNum(r.ttltagihan);
+  const mapDetailToRow = (detail: RekapDetailItem[]) =>
+    detail.map((r, idx) => {
+      const tdrdLancarLbr = toNum(r.jmlrek_lancar);
+      const tdrdLancarJumlah = toNum(r.ttltagihan_lancar);
+      const tdrdTunggakanLbr = toNum(r.jmlrek_tunggakan);
+      const tdrdTunggakanJumlah = toNum(r.ttltagihan_tunggakan);
+      const tdrdTotalLbr = toNum(r.jmlrek);
+      const tdrdTotalJumlah = toNum(r.ttltagihan);
 
-    const lunasLancarLbr = toNum(r.lbrlunas_lancar);
-    const lunasLancarJumlah = toNum(r.ttltagihanlunas_lancar);
-    const lunasTunggakanLbr = toNum(r.lbrlunas_tunggakan);
-    const lunasTunggakanJumlah = toNum(r.ttltagihanlunas_tunggakan);
-    const lunasTotalLbr = toNum(r.lbrlunas);
-    const lunasTotalJumlah = toNum(r.ttltagihanlunas);
+      const lunasLancarLbr = toNum(r.lbrlunas_lancar);
+      const lunasLancarJumlah = toNum(r.ttltagihanlunas_lancar);
+      const lunasTunggakanLbr = toNum(r.lbrlunas_tunggakan);
+      const lunasTunggakanJumlah = toNum(r.ttltagihanlunas_tunggakan);
+      const lunasTotalLbr = toNum(r.lbrlunas);
+      const lunasTotalJumlah = toNum(r.ttltagihanlunas);
 
-    const sisaLancarLbr = toNum(r.jmlrek_sisa_lancar);
-    const sisaLancarJumlah = toNum(r.sisatagihan_lancar);
-    const sisaTunggakanLbr = toNum(r.jmlrek_sisa_tunggakan);
-    const sisaTunggakanJumlah = toNum(r.sisatagihan_tunggakan);
-    const sisaTotalLbr = toNum(r.jmlrek_sisa);
-    const sisaTotalJumlah = toNum(r.sisatagihan);
+      const sisaLancarLbr = toNum(r.jmlrek_sisa_lancar);
+      const sisaLancarJumlah = toNum(r.sisatagihan_lancar);
+      const sisaTunggakanLbr = toNum(r.jmlrek_sisa_tunggakan);
+      const sisaTunggakanJumlah = toNum(r.sisatagihan_tunggakan);
+      const sisaTotalLbr = toNum(r.jmlrek_sisa);
+      const sisaTotalJumlah = toNum(r.sisatagihan);
 
-    return {
-      id: idx + 1,
-      kasir: r.nama,
-      // Total DRD Penagihan
-      tdrd_lancar_lbr: tdrdLancarLbr,
-      tdrd_lancar_jumlah: tdrdLancarJumlah,
-      tdrd_tunggakan_lbr: tdrdTunggakanLbr,
-      tdrd_tunggakan_jumlah: tdrdTunggakanJumlah,
-      tdrd_total_lbr: tdrdTotalLbr,
-      tdrd_total_jumlah: tdrdTotalJumlah,
-      // Total Lunas DRD Penagihan
-      lunas_lancar_lbr: lunasLancarLbr,
-      lunas_lancar_jumlah: lunasLancarJumlah,
-      lunas_tunggakan_lbr: lunasTunggakanLbr,
-      lunas_tunggakan_jumlah: lunasTunggakanJumlah,
-      lunas_total_lbr: lunasTotalLbr,
-      lunas_total_jumlah: lunasTotalJumlah,
-      // Sisa DRD Penagihan
-      sisa_lancar_lbr: sisaLancarLbr,
-      sisa_lancar_jumlah: sisaLancarJumlah,
-      sisa_tunggakan_lbr: sisaTunggakanLbr,
-      sisa_tunggakan_jumlah: sisaTunggakanJumlah,
-      sisa_total_lbr: sisaTotalLbr,
-      sisa_total_jumlah: sisaTotalJumlah,
-      // Efisiensi: (lunas / total) * 100
-      ef_lancar: pct(lunasLancarJumlah, tdrdLancarJumlah),
-      ef_tunggakan: pct(lunasTunggakanJumlah, tdrdTunggakanJumlah),
-      ef_total: pct(lunasTotalJumlah, tdrdTotalJumlah),
-    };
-  });
+      return {
+        id: idx + 1,
+        kasir: r.nama,
+        // Total DRD Penagihan
+        tdrd_lancar_lbr: tdrdLancarLbr,
+        tdrd_lancar_jumlah: tdrdLancarJumlah,
+        tdrd_tunggakan_lbr: tdrdTunggakanLbr,
+        tdrd_tunggakan_jumlah: tdrdTunggakanJumlah,
+        tdrd_total_lbr: tdrdTotalLbr,
+        tdrd_total_jumlah: tdrdTotalJumlah,
+        // Total Lunas DRD Penagihan
+        lunas_lancar_lbr: lunasLancarLbr,
+        lunas_lancar_jumlah: lunasLancarJumlah,
+        lunas_tunggakan_lbr: lunasTunggakanLbr,
+        lunas_tunggakan_jumlah: lunasTunggakanJumlah,
+        lunas_total_lbr: lunasTotalLbr,
+        lunas_total_jumlah: lunasTotalJumlah,
+        // Sisa DRD Penagihan
+        sisa_lancar_lbr: sisaLancarLbr,
+        sisa_lancar_jumlah: sisaLancarJumlah,
+        sisa_tunggakan_lbr: sisaTunggakanLbr,
+        sisa_tunggakan_jumlah: sisaTunggakanJumlah,
+        sisa_total_lbr: sisaTotalLbr,
+        sisa_total_jumlah: sisaTotalJumlah,
+        // Efisiensi: (lunas / total) * 100
+        ef_lancar: pct(lunasLancarJumlah, tdrdLancarJumlah),
+        ef_tunggakan: pct(lunasTunggakanJumlah, tdrdTunggakanJumlah),
+        ef_total: pct(lunasTotalJumlah, tdrdTotalJumlah),
+      };
+    });
+
+  const kasirDetail = data?.data?.kasir?.detail ?? [];
+  const loketDetail = data?.data?.loket?.detail ?? [];
+  const kasirRows = mapDetailToRow(kasirDetail as RekapDetailItem[]);
+  const loketRows = mapDetailToRow(loketDetail as RekapDetailItem[]);
 
   return (
     <AppTheme themeComponents={xThemeComponents}>
@@ -146,11 +140,19 @@ export default function Client() {
           </Box>
 
           <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-            Rekap Penerimaan Tim Tagih
+            Rekap Penerimaan Kasir
+          </Typography>
+
+          <Box sx={{ mb: 3 }}>
+            <CustomizedDataGrid rows={kasirRows} />
+          </Box>
+
+          <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
+            Rekap Penerimaan Loket
           </Typography>
 
           <Box>
-            <CustomizedDataGrid rows={rekapRows} />
+            <CustomizedDataGrid rows={loketRows} />
           </Box>
         </Box>
       </Box>
