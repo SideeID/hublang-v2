@@ -15,7 +15,7 @@ import AppNavbar from './AppNavbar';
 import Header from './Header';
 import AppTheme from '@/components/shared-theme/AppTheme';
 
-import Drd from './Drd';
+import Drd from './DrdUtama';
 import DrdGolongan from './DrdGolongan';
 import DrdKecamatan from './DrdKecamatan';
 import DrdKelurahan from './DrdKelurahan';
