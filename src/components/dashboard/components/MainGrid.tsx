@@ -19,7 +19,7 @@ export default function MainGrid() {
   const [kelurahanId, setKelurahanId] = React.useState<string>('');
   const start = startD.format('YYYY-MM-DD');
   const end = endD.format('YYYY-MM-DD');
-  const { data } = usePenerimaan(
+  const { data, isFetching } = usePenerimaan(
     {
       start_date: start,
       end_date: end,
@@ -107,18 +107,21 @@ export default function MainGrid() {
             labels={labels}
             lancar={barLancar}
             tunggakan={barTunggakan}
+            loading={isFetching}
           />
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
           <TotalReceiptPieChart
             totalLancar={totalLancar}
             totalTunggakan={totalTunggakan}
+            loading={isFetching}
           />
         </Grid>
         <Grid size={{ xs: 12 }}>
           <MonthlyComparisonGrids
             lastMonth={lastMonthRows}
             thisMonth={thisMonthRows}
+            loading={isFetching}
           />
         </Grid>
       </Grid>

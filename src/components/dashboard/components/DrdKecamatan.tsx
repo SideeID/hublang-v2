@@ -24,6 +24,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import DrdMobileList from './DrdMobileList';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -209,6 +211,7 @@ export default function DrdKecamatan() {
   const [month, setMonth] = React.useState(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const { data, isLoading, isError, error } = useDrd(periode, true);
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   const toInt = (s?: string | number) => {
     if (typeof s === 'number') return s;
@@ -249,6 +252,16 @@ export default function DrdKecamatan() {
     return map;
   }, [data]);
 
+  // Simplified rows for mobile
+  const mobileRows = React.useMemo(() => {
+    const flat: Row[] = Array.from(grouped.values()).flat();
+    return flat.map((r) => ({
+      id: r.id,
+      wilayah: r.kecamatan,
+      total_tagihan: r.total_tagihan,
+    }));
+  }, [grouped]);
+
   return (
     <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
@@ -280,6 +293,8 @@ export default function DrdKecamatan() {
           </Alert>
         ) : Array.from(grouped.entries()).length === 0 ? (
           <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
+        ) : isMobile ? (
+          <DrdMobileList rows={mobileRows} />
         ) : (
           Array.from(grouped.entries()).map(([wilayah, rows]) => {
             const { sum, avg } = computeTotals(rows);

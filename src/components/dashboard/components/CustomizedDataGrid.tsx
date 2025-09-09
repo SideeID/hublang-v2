@@ -1,9 +1,16 @@
 import * as React from 'react';
+import useSWR from 'swr';
 import {
   DataGridPro,
   GridColDef,
   GridColumnGroupingModel,
 } from '@mui/x-data-grid-pro';
+import type {
+  RekapParams,
+  RekapResponse,
+  RekapDetailItem,
+} from '@/lib/api/hublang';
+import { getRekap } from '@/lib/api/hublang';
 
 type Row = {
   id: number;
@@ -53,14 +60,14 @@ const columns: GridColDef<Row>[] = [
   //   headerAlign: 'right',
   // },
   // Total DRD Penagihan - Lancar
-  {
-    field: 'tdrd_lancar_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'tdrd_lancar_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'tdrd_lancar_jumlah',
     headerName: 'Jumlah',
@@ -70,14 +77,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Total DRD Penagihan - Tunggakan
-  {
-    field: 'tdrd_tunggakan_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'tdrd_tunggakan_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'tdrd_tunggakan_jumlah',
     headerName: 'Jumlah',
@@ -87,14 +94,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Total DRD Penagihan - Total
-  {
-    field: 'tdrd_total_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'tdrd_total_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'tdrd_total_jumlah',
     headerName: 'Jumlah',
@@ -104,14 +111,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Lancar
-  {
-    field: 'lunas_lancar_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'lunas_lancar_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'lunas_lancar_jumlah',
     headerName: 'Jumlah',
@@ -121,14 +128,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Tunggakan
-  {
-    field: 'lunas_tunggakan_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'lunas_tunggakan_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'lunas_tunggakan_jumlah',
     headerName: 'Jumlah',
@@ -138,14 +145,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Total Lunas DRD Penagihan - Total
-  {
-    field: 'lunas_total_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'center',
-  },
+  // {
+  //   field: 'lunas_total_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'center',
+  // },
   {
     field: 'lunas_total_jumlah',
     headerName: 'Jumlah',
@@ -155,14 +162,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'center',
   },
   // Sisa DRD Penagihan - Lancar
-  {
-    field: 'sisa_lancar_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'right',
-  },
+  // {
+  //   field: 'sisa_lancar_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'right',
+  // },
   {
     field: 'sisa_lancar_jumlah',
     headerName: 'Jumlah',
@@ -172,14 +179,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'right',
   },
   // Sisa DRD Penagihan - Tunggakan
-  {
-    field: 'sisa_tunggakan_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'right',
-  },
+  // {
+  //   field: 'sisa_tunggakan_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'right',
+  // },
   {
     field: 'sisa_tunggakan_jumlah',
     headerName: 'Jumlah',
@@ -189,14 +196,14 @@ const columns: GridColDef<Row>[] = [
     headerAlign: 'right',
   },
   // Sisa DRD Penagihan - Total
-  {
-    field: 'sisa_total_lbr',
-    headerName: 'Lbr',
-    type: 'number',
-    width: 100,
-    align: 'right',
-    headerAlign: 'right',
-  },
+  // {
+  //   field: 'sisa_total_lbr',
+  //   headerName: 'Lbr',
+  //   type: 'number',
+  //   width: 100,
+  //   align: 'right',
+  //   headerAlign: 'right',
+  // },
   {
     field: 'sisa_total_jumlah',
     headerName: 'Jumlah',
@@ -241,20 +248,23 @@ const columnGroupingModel: GridColumnGroupingModel = [
       {
         groupId: 'Lancar',
         children: [
-          { field: 'tdrd_lancar_lbr' },
+          // { field: 'tdrd_lancar_lbr' },
           { field: 'tdrd_lancar_jumlah' },
         ],
       },
       {
         groupId: 'Tunggakan',
         children: [
-          { field: 'tdrd_tunggakan_lbr' },
+          // { field: 'tdrd_tunggakan_lbr' },
           { field: 'tdrd_tunggakan_jumlah' },
         ],
       },
       {
         groupId: 'Total',
-        children: [{ field: 'tdrd_total_lbr' }, { field: 'tdrd_total_jumlah' }],
+        children: [
+          // { field: 'tdrd_total_lbr' },
+          { field: 'tdrd_total_jumlah' },
+        ],
       },
     ],
   },
@@ -264,21 +274,21 @@ const columnGroupingModel: GridColumnGroupingModel = [
       {
         groupId: 'Lancar',
         children: [
-          { field: 'lunas_lancar_lbr' },
+          // { field: 'lunas_lancar_lbr' },
           { field: 'lunas_lancar_jumlah' },
         ],
       },
       {
         groupId: 'Tunggakan',
         children: [
-          { field: 'lunas_tunggakan_lbr' },
+          // { field: 'lunas_tunggakan_lbr' },
           { field: 'lunas_tunggakan_jumlah' },
         ],
       },
       {
         groupId: 'Total',
         children: [
-          { field: 'lunas_total_lbr' },
+          // { field: 'lunas_total_lbr' },
           { field: 'lunas_total_jumlah' },
         ],
       },
@@ -290,20 +300,23 @@ const columnGroupingModel: GridColumnGroupingModel = [
       {
         groupId: 'Lancar',
         children: [
-          { field: 'sisa_lancar_lbr' },
+          // { field: 'sisa_lancar_lbr' },
           { field: 'sisa_lancar_jumlah' },
         ],
       },
       {
         groupId: 'Tunggakan',
         children: [
-          { field: 'sisa_tunggakan_lbr' },
+          // { field: 'sisa_tunggakan_lbr' },
           { field: 'sisa_tunggakan_jumlah' },
         ],
       },
       {
         groupId: 'Total',
-        children: [{ field: 'sisa_total_lbr' }, { field: 'sisa_total_jumlah' }],
+        children: [
+          // { field: 'sisa_total_lbr' },
+          { field: 'sisa_total_jumlah' },
+        ],
       },
     ],
   },
@@ -340,24 +353,24 @@ function computeTotals(data: Row[]) {
   };
 
   data.forEach((r) => {
-    sum.tdrd_lancar_lbr += r.tdrd_lancar_lbr;
-    sum.tdrd_lancar_jumlah += r.tdrd_lancar_jumlah;
-    sum.tdrd_tunggakan_lbr += r.tdrd_tunggakan_lbr;
-    sum.tdrd_tunggakan_jumlah += r.tdrd_tunggakan_jumlah;
-    sum.tdrd_total_lbr += r.tdrd_total_lbr;
-    sum.tdrd_total_jumlah += r.tdrd_total_jumlah;
-    sum.lunas_lancar_lbr += r.lunas_lancar_lbr;
-    sum.lunas_lancar_jumlah += r.lunas_lancar_jumlah;
-    sum.lunas_tunggakan_lbr += r.lunas_tunggakan_lbr;
-    sum.lunas_tunggakan_jumlah += r.lunas_tunggakan_jumlah;
-    sum.lunas_total_lbr += r.lunas_total_lbr;
-    sum.lunas_total_jumlah += r.lunas_total_jumlah;
-    sum.sisa_lancar_lbr += r.sisa_lancar_lbr;
-    sum.sisa_lancar_jumlah += r.sisa_lancar_jumlah;
-    sum.sisa_tunggakan_lbr += r.sisa_tunggakan_lbr;
-    sum.sisa_tunggakan_jumlah += r.sisa_tunggakan_jumlah;
-    sum.sisa_total_lbr += r.sisa_total_lbr;
-    sum.sisa_total_jumlah += r.sisa_total_jumlah;
+    sum.tdrd_lancar_lbr += (r.tdrd_lancar_lbr as number) || 0;
+    sum.tdrd_lancar_jumlah += (r.tdrd_lancar_jumlah as number) || 0;
+    sum.tdrd_tunggakan_lbr += (r.tdrd_tunggakan_lbr as number) || 0;
+    sum.tdrd_tunggakan_jumlah += (r.tdrd_tunggakan_jumlah as number) || 0;
+    sum.tdrd_total_lbr += (r.tdrd_total_lbr as number) || 0;
+    sum.tdrd_total_jumlah += (r.tdrd_total_jumlah as number) || 0;
+    sum.lunas_lancar_lbr += (r.lunas_lancar_lbr as number) || 0;
+    sum.lunas_lancar_jumlah += (r.lunas_lancar_jumlah as number) || 0;
+    sum.lunas_tunggakan_lbr += (r.lunas_tunggakan_lbr as number) || 0;
+    sum.lunas_tunggakan_jumlah += (r.lunas_tunggakan_jumlah as number) || 0;
+    sum.lunas_total_lbr += (r.lunas_total_lbr as number) || 0;
+    sum.lunas_total_jumlah += (r.lunas_total_jumlah as number) || 0;
+    sum.sisa_lancar_lbr += (r.sisa_lancar_lbr as number) || 0;
+    sum.sisa_lancar_jumlah += (r.sisa_lancar_jumlah as number) || 0;
+    sum.sisa_tunggakan_lbr += (r.sisa_tunggakan_lbr as number) || 0;
+    sum.sisa_tunggakan_jumlah += (r.sisa_tunggakan_jumlah as number) || 0;
+    sum.sisa_total_lbr += (r.sisa_total_lbr as number) || 0;
+    sum.sisa_total_jumlah += (r.sisa_total_jumlah as number) || 0;
   });
 
   const pct = (num: number, den: number) =>
@@ -429,10 +442,142 @@ const sampleRows: Row[] = [
 ];
 
 export default function CustomizedDataGrid({
-  rows = sampleRows,
+  rows: propRows,
+  fetchParams,
+  source = 'kasir',
 }: {
   rows?: Row[];
+  fetchParams?: RekapParams;
+  source?: 'kasir' | 'loket';
 }) {
+  // Compute dynamic column headers/group titles based on source
+  const gridColumns = React.useMemo<GridColDef<Row>[]>(
+    () =>
+      columns.map((c) =>
+        c.field === 'kasir'
+          ? {
+              ...c,
+              headerName: source === 'loket' ? 'Loket' : 'Kasir',
+            }
+          : c,
+      ),
+    [source],
+  );
+
+  const gridColumnGroupingModel = React.useMemo<GridColumnGroupingModel>(
+    () =>
+      columnGroupingModel.map((g) =>
+        g.groupId === 'Kasir'
+          ? { ...g, groupId: source === 'loket' ? 'Loket' : 'Kasir' }
+          : g,
+      ),
+    [source],
+  );
+
+  const toNum = React.useCallback((s?: string) => {
+    const n = Number(s);
+    return Number.isNaN(n) ? 0 : n;
+  }, []);
+
+  const pct = React.useCallback(
+    (num: number, den: number) =>
+      den > 0 ? Math.round((num / den) * 1000) / 10 : 0,
+    [],
+  );
+
+  const mapDetailToRow = React.useCallback(
+    (detail: RekapDetailItem[]) =>
+      detail.map((r, idx) => {
+        // const tdrdLancarLbr = toNum(r.jmlrek_lancar);
+        const tdrdLancarJumlah = toNum(r.ttltagihan_lancar);
+        // const tdrdTunggakanLbr = toNum(r.jmlrek_tunggakan);
+        const tdrdTunggakanJumlah = toNum(r.ttltagihan_tunggakan);
+        // const tdrdTotalLbr = toNum(r.jmlrek);
+        const tdrdTotalJumlah = toNum(r.ttltagihan);
+
+        // const lunasLancarLbr = toNum(r.lbrlunas_lancar);
+        const lunasLancarJumlah = toNum(r.ttltagihanlunas_lancar);
+        // const lunasTunggakanLbr = toNum(r.lbrlunas_tunggakan);
+        const lunasTunggakanJumlah = toNum(r.ttltagihanlunas_tunggakan);
+        // const lunasTotalLbr = toNum(r.lbrlunas);
+        const lunasTotalJumlah = toNum(r.ttltagihanlunas);
+
+        // const sisaLancarLbr = toNum(r.jmlrek_sisa_lancar);
+        const sisaLancarJumlah = toNum(r.sisatagihan_lancar);
+        // const sisaTunggakanLbr = toNum(r.jmlrek_sisa_tunggakan);
+        const sisaTunggakanJumlah = toNum(r.sisatagihan_tunggakan);
+        // const sisaTotalLbr = toNum(r.jmlrek_sisa);
+        const sisaTotalJumlah = toNum(r.sisatagihan);
+
+        return {
+          id: idx + 1,
+          kasir: r.nama,
+          // Total DRD Penagihan
+          // tdrd_lancar_lbr: tdrdLancarLbr,
+          tdrd_lancar_jumlah: tdrdLancarJumlah,
+          // tdrd_tunggakan_lbr: tdrdTunggakanLbr,
+          tdrd_tunggakan_jumlah: tdrdTunggakanJumlah,
+          // tdrd_total_lbr: tdrdTotalLbr,
+          tdrd_total_jumlah: tdrdTotalJumlah,
+          // Total Lunas DRD Penagihan
+          // lunas_lancar_lbr: lunasLancarLbr,
+          lunas_lancar_jumlah: lunasLancarJumlah,
+          // lunas_tunggakan_lbr: lunasTunggakanLbr,
+          lunas_tunggakan_jumlah: lunasTunggakanJumlah,
+          // lunas_total_lbr: lunasTotalLbr,
+          lunas_total_jumlah: lunasTotalJumlah,
+          // Sisa DRD Penagihan
+          // sisa_lancar_lbr: sisaLancarLbr,
+          sisa_lancar_jumlah: sisaLancarJumlah,
+          // sisa_tunggakan_lbr: sisaTunggakanLbr,
+          sisa_tunggakan_jumlah: sisaTunggakanJumlah,
+          // sisa_total_lbr: sisaTotalLbr,
+          sisa_total_jumlah: sisaTotalJumlah,
+          // Efisiensi
+          ef_lancar: pct(lunasLancarJumlah, tdrdLancarJumlah),
+          ef_tunggakan: pct(lunasTunggakanJumlah, tdrdTunggakanJumlah),
+          ef_total: pct(lunasTotalJumlah, tdrdTotalJumlah),
+        } as Row;
+      }),
+    [pct, toNum],
+  );
+
+  const swrKey = fetchParams
+    ? [
+        'rekap',
+        fetchParams.periode,
+        fetchParams.rekfrom ?? '',
+        fetchParams.rekto ?? '',
+      ].join('|')
+    : null;
+  const {
+    data: rekapData,
+    isLoading: swrLoading,
+    isValidating,
+  } = useSWR<RekapResponse>(
+    swrKey,
+    () => getRekap(fetchParams as RekapParams),
+    { revalidateOnFocus: false },
+  );
+
+  const fetchedRows = React.useMemo(() => {
+    if (!rekapData) return undefined;
+    const block =
+      source === 'loket' ? rekapData.data?.loket : rekapData.data?.kasir;
+    const detail = (block?.detail ?? []) as RekapDetailItem[];
+    return mapDetailToRow(detail);
+  }, [rekapData, mapDetailToRow, source]);
+
+  const [rows, setRows] = React.useState<Row[]>(propRows ?? sampleRows);
+  React.useEffect(() => {
+    if (Array.isArray(propRows)) setRows(propRows);
+  }, [propRows]);
+  React.useEffect(() => {
+    if (Array.isArray(fetchedRows)) setRows(fetchedRows);
+  }, [fetchedRows]);
+
+  const showLoading = swrLoading || isValidating;
+
   const pinnedBottom = React.useMemo(() => {
     const data = rows ?? [];
     if (!data.length) return [] as Row[];
@@ -441,23 +586,23 @@ export default function CustomizedDataGrid({
       {
         id: -1,
         kasir: 'Total',
-        tdrd_lancar_lbr: sum.tdrd_lancar_lbr,
+        // tdrd_lancar_lbr: sum.tdrd_lancar_lbr,
         tdrd_lancar_jumlah: sum.tdrd_lancar_jumlah,
-        tdrd_tunggakan_lbr: sum.tdrd_tunggakan_lbr,
+        // tdrd_tunggakan_lbr: sum.tdrd_tunggakan_lbr,
         tdrd_tunggakan_jumlah: sum.tdrd_tunggakan_jumlah,
-        tdrd_total_lbr: sum.tdrd_total_lbr,
+        // tdrd_total_lbr: sum.tdrd_total_lbr,
         tdrd_total_jumlah: sum.tdrd_total_jumlah,
-        lunas_lancar_lbr: sum.lunas_lancar_lbr,
+        // lunas_lancar_lbr: sum.lunas_lancar_lbr,
         lunas_lancar_jumlah: sum.lunas_lancar_jumlah,
-        lunas_tunggakan_lbr: sum.lunas_tunggakan_lbr,
+        // lunas_tunggakan_lbr: sum.lunas_tunggakan_lbr,
         lunas_tunggakan_jumlah: sum.lunas_tunggakan_jumlah,
-        lunas_total_lbr: sum.lunas_total_lbr,
+        // lunas_total_lbr: sum.lunas_total_lbr,
         lunas_total_jumlah: sum.lunas_total_jumlah,
-        sisa_lancar_lbr: sum.sisa_lancar_lbr,
+        // sisa_lancar_lbr: sum.sisa_lancar_lbr,
         sisa_lancar_jumlah: sum.sisa_lancar_jumlah,
-        sisa_tunggakan_lbr: sum.sisa_tunggakan_lbr,
+        // sisa_tunggakan_lbr: sum.sisa_tunggakan_lbr,
         sisa_tunggakan_jumlah: sum.sisa_tunggakan_jumlah,
-        sisa_total_lbr: sum.sisa_total_lbr,
+        // sisa_total_lbr: sum.sisa_total_lbr,
         sisa_total_jumlah: sum.sisa_total_jumlah,
         ef_lancar: ef.ef_lancar,
         ef_tunggakan: ef.ef_tunggakan,
@@ -472,18 +617,19 @@ export default function CustomizedDataGrid({
       disableColumnMenu
       disableRowSelectionOnClick
       rows={rows}
-      columns={columns}
-      columnGroupingModel={columnGroupingModel}
+      columns={gridColumns}
+      columnGroupingModel={gridColumnGroupingModel}
       columnGroupHeaderHeight={36}
       pinnedRows={{ bottom: pinnedBottom }}
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
       }
-      initialState={{
-        pagination: { paginationModel: { pageSize: 20 } },
-      }}
-      pageSizeOptions={[10, 20, 50]}
+      loading={showLoading}
       slotProps={{
+        loadingOverlay: {
+          variant: 'skeleton',
+          noRowsVariant: 'skeleton',
+        },
         filterPanel: {
           filterFormProps: {
             logicOperatorInputProps: { variant: 'outlined', size: 'small' },
@@ -503,6 +649,10 @@ export default function CustomizedDataGrid({
           },
         },
       }}
+      initialState={{
+        pagination: { paginationModel: { pageSize: 20 } },
+      }}
+      pageSizeOptions={[10, 20, 50]}
       sx={{
         '& .MuiDataGrid-columnHeaderTitle': {
           textAlign: 'center',

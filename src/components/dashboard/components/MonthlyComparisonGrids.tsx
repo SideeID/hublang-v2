@@ -92,15 +92,6 @@ const columns: GridColDef<CombinedRow>[] = [
     width: 150,
     align: 'right',
     headerAlign: 'center',
-    renderCell: (params: { value?: number | null }) => {
-      const v = params.value;
-      if (v == null) return '';
-      return (
-        <span style={{ color: v < 0 ? '#d32f2f' : 'inherit' }}>
-          {String(v)}
-        </span>
-      );
-    },
   },
 ];
 
@@ -130,11 +121,13 @@ const columnGroupingModel: GridColumnGroupingModel = [
 export default function MonthlyComparisonGrids({
   lastMonth,
   thisMonth,
+  loading = false,
 }: {
   lastMonth: MonthlyRow[];
   thisMonth: MonthlyRow[];
+  loading?: boolean;
 }) {
-  const rows: CombinedRow[] = React.useMemo(() => {
+  const computedRows: CombinedRow[] = React.useMemo(() => {
     const map = new Map<string, CombinedRow>();
     let id = 1;
     for (const r of thisMonth) {
@@ -161,6 +154,13 @@ export default function MonthlyComparisonGrids({
     return Array.from(map.values());
   }, [thisMonth, lastMonth]);
 
+  const [rows, setRows] = React.useState<CombinedRow[]>(computedRows);
+  React.useEffect(() => {
+    if (!loading) {
+      setRows(computedRows);
+    }
+  }, [computedRows, loading]);
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       <Box>
@@ -177,11 +177,18 @@ export default function MonthlyComparisonGrids({
               columns={columns}
               columnGroupingModel={columnGroupingModel}
               columnGroupHeaderHeight={36}
+              loading={loading}
               initialState={{
                 pagination: { paginationModel: { pageSize: 20 } },
               }}
               pageSizeOptions={[10, 20, 50]}
               disableColumnMenu
+              slotProps={{
+                loadingOverlay: {
+                  variant: 'skeleton',
+                  noRowsVariant: 'skeleton',
+                },
+              }}
               sx={{
                 '& .MuiDataGrid-columnHeaderTitle': {
                   textAlign: 'center',
