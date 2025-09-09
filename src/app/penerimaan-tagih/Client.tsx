@@ -11,6 +11,8 @@ import AppNavbar from '@/components/dashboard/components/AppNavbar';
 import DateRangeFilter from '@/components/dashboard/components/DateRangeFilter';
 import CustomizedDataGrid from '@/components/dashboard/components/CustomizedDataGrid';
 import TagihFilters from '@/components/dashboard/components/TagihFilters';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
 import { useTimTagih } from '@/hooks/useTimTagih';
 import type { RekapParams } from '@/lib/api/hublang';
 import {
@@ -66,59 +68,68 @@ export default function Client() {
       <Box sx={{ display: 'flex' }}>
         <SideMenu />
         <AppNavbar />
-        <Box component='main' sx={{ flexGrow: 1, p: 3, pt: 0 }}>
-          <Box sx={{ mb: 2 }}>
+        <Box component='main' sx={{ flexGrow: 1, overflow: 'auto' }}>
+          <Stack
+            spacing={2}
+            sx={{ alignItems: 'center', mx: 3, pb: 5, mt: { xs: 8, md: 0 } }}
+          >
             <Header current='Penerimaan Petugas Tagih' />
-          </Box>
-          <Box sx={{ mb: 1.5 }}>
-            <DateRangeFilter
-              start={startD}
-              end={endD}
-              onStartChange={setStartD}
-              onEndChange={setEndD}
-              wilayahId={wilayahId}
-              onWilayahChange={(v) => {
-                setWilayahId(v);
-                setRayonId('');
-              }}
-              rayonId={rayonId}
-              onRayonChange={setRayonId}
-              kecamatanId={kecamatanId}
-              onKecamatanChange={(v) => {
-                setKecamatanId(v);
-                setKelurahanId('');
-              }}
-              kelurahanId={kelurahanId}
-              onKelurahanChange={setKelurahanId}
-            />
-          </Box>
-          <Box sx={{ mb: 2 }}>
-            <TagihFilters
-              minJmlrek={minJmlrek}
-              maxJmlrek={maxJmlrek}
-              onMinJmlrekChange={setMinJmlrek}
-              onMaxJmlrekChange={setMaxJmlrek}
-              timTagih={timTagih}
-              onTimTagihChange={setTimTagih}
-              teamOptions={teamOptions}
-            />
-          </Box>
-
-          <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-            Rekap Penerimaan Kasir
-          </Typography>
-
-          <Box sx={{ mb: 3 }}>
-            <CustomizedDataGrid fetchParams={fetchParams} source='kasir' />
-          </Box>
-
-          <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-            Rekap Penerimaan Loket
-          </Typography>
-
-          <Box>
-            <CustomizedDataGrid fetchParams={fetchParams} source='loket' />
-          </Box>
+            <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
+              <Box sx={{ mb: 1.5 }}>
+                <DateRangeFilter
+                  start={startD}
+                  end={endD}
+                  onStartChange={setStartD}
+                  onEndChange={setEndD}
+                  wilayahId={wilayahId}
+                  onWilayahChange={(v) => {
+                    setWilayahId(v);
+                    setRayonId('');
+                  }}
+                  rayonId={rayonId}
+                  onRayonChange={setRayonId}
+                  kecamatanId={kecamatanId}
+                  onKecamatanChange={(v) => {
+                    setKecamatanId(v);
+                    setKelurahanId('');
+                  }}
+                  kelurahanId={kelurahanId}
+                  onKelurahanChange={setKelurahanId}
+                />
+              </Box>
+              <Box sx={{ mb: 2 }}>
+                <TagihFilters
+                  minJmlrek={minJmlrek}
+                  maxJmlrek={maxJmlrek}
+                  onMinJmlrekChange={setMinJmlrek}
+                  onMaxJmlrekChange={setMaxJmlrek}
+                  timTagih={timTagih}
+                  onTimTagihChange={setTimTagih}
+                  teamOptions={teamOptions}
+                />
+              </Box>
+              <Grid container spacing={2} columns={12}>
+                <Grid size={{ xs: 12 }}>
+                  <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
+                    Rekap Penerimaan Kasir
+                  </Typography>
+                  <CustomizedDataGrid
+                    fetchParams={fetchParams}
+                    source='kasir'
+                  />
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
+                    Rekap Penerimaan Loket
+                  </Typography>
+                  <CustomizedDataGrid
+                    fetchParams={fetchParams}
+                    source='loket'
+                  />
+                </Grid>
+              </Grid>
+            </Box>
+          </Stack>
         </Box>
       </Box>
     </AppTheme>

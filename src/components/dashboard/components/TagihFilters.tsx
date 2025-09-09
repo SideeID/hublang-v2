@@ -4,12 +4,8 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import type { SelectChangeEvent } from '@mui/material/Select';
 import Typography from '@mui/material/Typography';
+import Autocomplete from '@mui/material/Autocomplete';
 
 export interface TagihFiltersProps {
   minJmlrek?: number;
@@ -36,8 +32,24 @@ export default function TagihFilters({
     return ['Tim A', 'Tim B', 'Tim C'];
   }, [teamOptions]);
 
-  const handleTeamChange = (e: SelectChangeEvent<string>) => {
-    onTimTagihChange?.(e.target.value as string);
+  const normalizedOptions = React.useMemo(
+    () =>
+      options.map((opt) =>
+        typeof opt === 'string' ? { id: opt, label: opt } : opt,
+      ),
+    [options],
+  );
+
+  const selectedTeam = React.useMemo(
+    () => normalizedOptions.find((o) => o.id === timTagih) ?? null,
+    [normalizedOptions, timTagih],
+  );
+
+  const handleTeamChange = (
+    _event: React.SyntheticEvent,
+    newValue: { id: string; label: string } | null,
+  ) => {
+    onTimTagihChange?.(newValue?.id ?? '');
   };
 
   const parseNumber = (v: string) => {
@@ -47,9 +59,9 @@ export default function TagihFilters({
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', maxWidth: { xs: 360, sm: 'none' } }}>
       <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
-        <Grid size={{ xs: 6, sm: 'auto' }}>
+        <Grid size={{ xs: 12, sm: 'auto' }}>
           <TextField
             type='number'
             label='Jml Rek'
@@ -60,8 +72,13 @@ export default function TagihFilters({
             inputProps={{ min: 0 }}
           />
         </Grid>
-        <Typography variant='body1'>s/d</Typography>
-        <Grid size={{ xs: 6, sm: 'auto' }}>
+        <Grid
+          size={{ xs: 'auto' }}
+          sx={{ display: { xs: 'none', sm: 'flex' }, alignItems: 'center' }}
+        >
+          <Typography variant='body1'>s/d</Typography>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 'auto' }}>
           <TextField
             type='number'
             label='Jml Rek'
@@ -74,32 +91,25 @@ export default function TagihFilters({
         </Grid>
 
         <Grid size={{ xs: 12, sm: 'auto' }}>
-          <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
-            <InputLabel id='tim-tagih-label'>Tim Tagih</InputLabel>
-            <Select
-              labelId='tim-tagih-label'
-              id='tim-tagih'
-              value={timTagih}
-              label='Tim Tagih'
-              onChange={handleTeamChange}
-            >
-              <MenuItem value=''>Semua Tim</MenuItem>
-              {options.map((opt) => {
-                if (typeof opt === 'string') {
-                  return (
-                    <MenuItem key={opt} value={opt}>
-                      {opt}
-                    </MenuItem>
-                  );
-                }
-                return (
-                  <MenuItem key={opt.id} value={opt.id}>
-                    {opt.label}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
+          <Autocomplete<{ id: string; label: string }>
+            size='small'
+            fullWidth
+            options={normalizedOptions}
+            value={selectedTeam}
+            onChange={handleTeamChange}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            getOptionLabel={(option) => option.label}
+            forcePopupIcon={false}
+            sx={{ minWidth: { sm: 160 } }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label='Tim Tagih'
+                placeholder='Cari tim…'
+              />
+            )}
+            clearOnEscape
+          />
         </Grid>
       </Grid>
     </Box>

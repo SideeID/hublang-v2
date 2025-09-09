@@ -10,7 +10,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import type { Dayjs } from 'dayjs';
-import NoSsr from '@mui/material/NoSsr';
 import { useWilayah } from '@/hooks/useWilayah';
 import { useRayon } from '@/hooks/useRayon';
 import { useKecamatan } from '@/hooks/useKecamatan';
@@ -69,65 +68,67 @@ export default function DateRangeFilter({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%', maxWidth: { xs: 360, sm: 'none' } }}>
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
-          <Grid size={{ xs: 6, sm: 'auto' }}>
-            <NoSsr>
-              <DatePicker
-                label='Bulan awal'
-                views={['year', 'month']}
-                openTo='month'
-                format='MMMM YYYY'
-                value={start}
-                onChange={(newValue) => {
-                  if (!newValue) return;
-                  const startMonth = newValue.startOf('month');
-                  let resultingEnd = end;
-                  if (resultingEnd.isBefore(startMonth)) {
-                    resultingEnd = startMonth.endOf('month');
-                    onEndChange(resultingEnd);
-                  }
-                  onStartChange(startMonth);
-                }}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    sx: { width: { xs: '100%', sm: 180 } },
-                  },
-                }}
-              />
-            </NoSsr>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
+            <DatePicker
+              label='Bulan awal'
+              views={['year', 'month']}
+              openTo='month'
+              format='MMMM YYYY'
+              reduceAnimations
+              value={start}
+              onChange={(newValue) => {
+                if (!newValue) return;
+                const startMonth = newValue.startOf('month');
+                let resultingEnd = end;
+                if (resultingEnd.isBefore(startMonth)) {
+                  resultingEnd = startMonth.endOf('month');
+                  onEndChange(resultingEnd);
+                }
+                onStartChange(startMonth);
+              }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  fullWidth: true,
+                  sx: { width: { xs: '100%', sm: 180 } },
+                  inputProps: { readOnly: true },
+                },
+              }}
+            />
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 'auto' }}>
-            <NoSsr>
-              <DatePicker
-                label='Bulan akhir'
-                views={['year', 'month']}
-                openTo='month'
-                format='MMMM YYYY'
-                value={end}
-                onChange={(newValue) => {
-                  if (!newValue) return;
-                  const endMonth = newValue.endOf('month');
-                  let resultingStart = start;
-                  if (endMonth.isBefore(resultingStart)) {
-                    resultingStart = endMonth.startOf('month');
-                    onStartChange(resultingStart);
-                  }
-                  onEndChange(endMonth);
-                }}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    sx: { width: { xs: '100%', sm: 180 } },
-                  },
-                }}
-              />
-            </NoSsr>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
+            <DatePicker
+              label='Bulan akhir'
+              views={['year', 'month']}
+              openTo='month'
+              format='MMMM YYYY'
+              reduceAnimations
+              value={end}
+              onChange={(newValue) => {
+                if (!newValue) return;
+                const endMonth = newValue.endOf('month');
+                let resultingStart = start;
+                if (endMonth.isBefore(resultingStart)) {
+                  resultingStart = endMonth.startOf('month');
+                  onStartChange(resultingStart);
+                }
+                onEndChange(endMonth);
+              }}
+              slotProps={{
+                textField: {
+                  size: 'small',
+                  fullWidth: true,
+                  sx: { width: { xs: '100%', sm: 180 } },
+                  inputProps: { readOnly: true },
+                },
+              }}
+            />
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 'auto' }}>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
             <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
               <InputLabel id='wilayah-label'>Wilayah</InputLabel>
               <Select
@@ -147,7 +148,7 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 'auto' }}>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
             <FormControl
               size='small'
               fullWidth
@@ -172,7 +173,7 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 'auto' }}>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
             <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
               <InputLabel id='kecamatan-label'>Kecamatan</InputLabel>
               <Select
@@ -192,7 +193,7 @@ export default function DateRangeFilter({
             </FormControl>
           </Grid>
 
-          <Grid size={{ xs: 6, sm: 'auto' }}>
+          <Grid size={{ xs: 12, sm: 'auto' }}>
             <FormControl
               size='small'
               fullWidth
