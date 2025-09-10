@@ -232,29 +232,76 @@ export default function DrdGolongan({
   };
 
   const grouped = React.useMemo(() => {
-    const items = data?.data ?? [];
+    interface DrdLike {
+      id?: number;
+      nama?: string | null;
+      wilayah?: string;
+      totalpel?: number | string;
+      jmlaktif?: number | string;
+      jmlpelpasif?: number | string;
+      jmlm3?: number | string;
+      harga_air?: number | string;
+      administrasi?: number | string;
+      danameter?: number | string;
+      total_tagihan?: number | string;
+      rata2m3?: number | string;
+      rata2rp?: number | string;
+    }
+
     const map = new Map<string, Row[]>();
-    items.forEach((it) => {
-      const row: Row = {
-        id: it.id,
-        no: (map.get(it.wilayah)?.length ?? 0) + 1,
-        golongan: it.nama,
-        pelanggan_total: toInt(it.totalpel),
-        pelanggan_aktif: toInt(it.jmlaktif),
-        pelanggan_pasif: toInt(it.jmlpelpasif),
-        pelanggan_m3: toInt(it.jmlm3),
-        tagihan_harga_air: toInt(it.harga_air),
-        tagihan_administrasi: toInt(it.administrasi),
-        tagihan_data_meter: toInt(it.danameter),
-        total_tagihan: toInt(it.total_tagihan),
-        rata_m3: toFloat(it.rata2m3),
-        rata_rupiah: toFloat(it.rata2rp),
-      };
-      const key = it.wilayah || 'Tanpa Wilayah';
-      const arr = map.get(key) ?? [];
-      arr.push(row);
-      map.set(key, arr);
-    });
+    const detail = (data as { data?: { detail?: Record<string, DrdLike[]> } })
+      ?.data?.detail;
+    if (detail && typeof detail === 'object') {
+      Object.entries(detail).forEach(([wilayahKey, arr]) => {
+        (arr || []).forEach((it) => {
+          const key = wilayahKey || it.wilayah || 'Tanpa Wilayah';
+          const bucket = map.get(key) ?? [];
+          const row: Row = {
+            id: toInt(it.id ?? 0) || bucket.length + 1,
+            no: bucket.length + 1,
+            golongan: it.nama ?? '-',
+            pelanggan_total: toInt(it.totalpel),
+            pelanggan_aktif: toInt(it.jmlaktif),
+            pelanggan_pasif: toInt(it.jmlpelpasif),
+            pelanggan_m3: toInt(it.jmlm3),
+            tagihan_harga_air: toInt(it.harga_air),
+            tagihan_administrasi: toInt(it.administrasi),
+            tagihan_data_meter: toInt(it.danameter),
+            total_tagihan: toInt(it.total_tagihan),
+            rata_m3: toFloat(it.rata2m3),
+            rata_rupiah: toFloat(it.rata2rp),
+          };
+          bucket.push(row);
+          map.set(key, bucket);
+        });
+      });
+      return map;
+    }
+    // Backward compatibility (flat array in data.data)
+    const legacyItems = (data as { data?: DrdLike[] })?.data;
+    if (Array.isArray(legacyItems)) {
+      legacyItems.forEach((it) => {
+        const key = it.wilayah || 'Tanpa Wilayah';
+        const bucket = map.get(key) ?? [];
+        const row: Row = {
+          id: toInt(it.id ?? 0) || bucket.length + 1,
+          no: bucket.length + 1,
+          golongan: it.nama ?? '-',
+          pelanggan_total: toInt(it.totalpel),
+          pelanggan_aktif: toInt(it.jmlaktif),
+          pelanggan_pasif: toInt(it.jmlpelpasif),
+          pelanggan_m3: toInt(it.jmlm3),
+          tagihan_harga_air: toInt(it.harga_air),
+          tagihan_administrasi: toInt(it.administrasi),
+          tagihan_data_meter: toInt(it.danameter),
+          total_tagihan: toInt(it.total_tagihan),
+          rata_m3: toFloat(it.rata2m3),
+          rata_rupiah: toFloat(it.rata2rp),
+        };
+        bucket.push(row);
+        map.set(key, bucket);
+      });
+    }
     return map;
   }, [data]);
 
