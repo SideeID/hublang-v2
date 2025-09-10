@@ -15,6 +15,7 @@ export interface TagihFiltersProps {
   timTagih?: string;
   onTimTagihChange?: (value: string) => void;
   teamOptions?: Array<string | { id: string; label: string }>;
+  hideTeam?: boolean;
 }
 
 export default function TagihFilters({
@@ -25,6 +26,7 @@ export default function TagihFilters({
   timTagih = '',
   onTimTagihChange,
   teamOptions,
+  hideTeam = false,
 }: TagihFiltersProps) {
   const options = React.useMemo(() => {
     if (teamOptions && teamOptions.length > 0) return teamOptions;
@@ -97,27 +99,29 @@ export default function TagihFilters({
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 'auto' }}>
-          <Autocomplete<{ id: string; label: string }>
-            size='small'
-            fullWidth
-            options={normalizedOptions}
-            value={selectedTeam}
-            onChange={handleTeamChange}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            getOptionLabel={(option) => option.label}
-            forcePopupIcon={false}
-            sx={{ minWidth: { sm: 160 } }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label='Tim Tagih'
-                placeholder='Cari tim…'
-              />
-            )}
-            clearOnEscape
-          />
-        </Grid>
+        {!hideTeam && (
+          <Grid size={{ xs: 12, sm: 'auto' }}>
+            <Autocomplete<{ id: string; label: string }>
+              size='small'
+              fullWidth
+              options={normalizedOptions}
+              value={selectedTeam}
+              onChange={handleTeamChange}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              getOptionLabel={(option) => option.label}
+              forcePopupIcon={false}
+              sx={{ minWidth: { sm: 160 } }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label='Tim Tagih'
+                  placeholder='Cari tim…'
+                />
+              )}
+              clearOnEscape
+            />
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

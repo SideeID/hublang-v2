@@ -11,6 +11,10 @@ import AppNavbar from '@/components/dashboard/components/AppNavbar';
 import DateRangeFilter from '@/components/dashboard/components/DateRangeFilter';
 import CustomizedDataGrid from '@/components/dashboard/components/CustomizedDataGrid';
 import TagihFilters from '@/components/dashboard/components/TagihFilters';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -57,7 +61,7 @@ export default function Client() {
   const [draftMaxJmlrek, setDraftMaxJmlrek] = React.useState<
     number | undefined
   >();
-  const [draftTimTagih, setDraftTimTagih] = React.useState<string>('');
+  // Removed draft state for timTagih since it's controlled directly outside the modal
 
   const [filtersOpen, setFiltersOpen] = React.useState(false);
 
@@ -68,7 +72,6 @@ export default function Client() {
     setDraftKelurahanId(kelurahanId);
     setDraftMinJmlrek(minJmlrek);
     setDraftMaxJmlrek(maxJmlrek);
-    setDraftTimTagih(timTagih);
     setFiltersOpen(true);
   };
   const closeFilters = () => setFiltersOpen(false);
@@ -79,7 +82,6 @@ export default function Client() {
     setKelurahanId(draftKelurahanId);
     setMinJmlrek(draftMinJmlrek);
     setMaxJmlrek(draftMaxJmlrek);
-    setTimTagih(draftTimTagih);
     setFiltersOpen(false);
   };
 
@@ -146,6 +148,23 @@ export default function Client() {
                   hideLocations
                   compact
                 />
+                <FormControl size='small' sx={{ minWidth: 170 }}>
+                  <InputLabel id='tim-tagih-label'>Tim Tagih</InputLabel>
+                  <Select
+                    labelId='tim-tagih-label'
+                    label='Tim Tagih'
+                    value={timTagih}
+                    onChange={(e) => setTimTagih(e.target.value)}
+                    displayEmpty={false}
+                  >
+                    <MenuItem value=''>Semua</MenuItem>
+                    {teamOptions.map((opt) => (
+                      <MenuItem key={opt.id} value={opt.id}>
+                        {opt.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
                 <Button variant='outlined' size='small' onClick={openFilters}>
                   Filter Lainnya
                 </Button>
@@ -191,9 +210,7 @@ export default function Client() {
                     maxJmlrek={draftMaxJmlrek}
                     onMinJmlrekChange={setDraftMinJmlrek}
                     onMaxJmlrekChange={setDraftMaxJmlrek}
-                    timTagih={draftTimTagih}
-                    onTimTagihChange={setDraftTimTagih}
-                    teamOptions={teamOptions}
+                    hideTeam
                   />
                 </DialogContent>
                 <DialogActions>
