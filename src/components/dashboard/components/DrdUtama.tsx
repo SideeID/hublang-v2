@@ -35,6 +35,7 @@ const xThemeComponents = {
 
 type Row = {
   id: number;
+  compositeKey?: string;
   no: number;
   golongan: string;
   wilayah: string;
@@ -235,20 +236,27 @@ export default function Drd({
   const isMobile = useMediaQuery('(max-width:600px)');
 
   const toInt = (s?: string | number) => {
+    if (s === null || s === undefined) return 0;
     if (typeof s === 'number') return s;
-    const n = Number(s);
+    const trimmed = s.trim();
+    if (trimmed === '') return 0;
+    const n = Number(trimmed);
     return Number.isNaN(n) ? 0 : n;
   };
   const toFloat = (s?: string | number) => {
+    if (s === null || s === undefined) return 0;
     if (typeof s === 'number') return s;
-    const n = parseFloat(String(s ?? '0'));
+    const trimmed = s.trim();
+    if (trimmed === '') return 0;
+    const n = parseFloat(trimmed);
     return Number.isNaN(n) ? 0 : n;
   };
 
   const rows: Row[] = React.useMemo(() => {
     const items = data?.data ?? [];
     return items.map((it, i) => ({
-      id: it.id,
+      id: i + 1,
+      compositeKey: `${it.id}-${it.wilayah_id}-${i}`,
       no: i + 1,
       golongan: it.nama,
       wilayah: it.wilayah,
@@ -293,8 +301,8 @@ export default function Drd({
     () => [
       {
         groupKey: 'Data',
-        rows: rows.map((r) => ({
-          id: r.id,
+        rows: rows.map((r, idx) => ({
+          id: idx + 1, // numeric id for mobile grid compatibility
           nama: r.golongan,
           total_tagihan: r.total_tagihan,
         })),
