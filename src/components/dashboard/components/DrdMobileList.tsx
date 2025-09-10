@@ -42,7 +42,6 @@ export default function DrdMobileList({ rows }: { rows: MobileRow[] }) {
         columns={columns}
         density='compact'
         hideFooter
-        disableColumnMenu
         disableRowSelectionOnClick
         sx={{
           // smaller font and tighter padding for mobile

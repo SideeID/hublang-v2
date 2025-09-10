@@ -281,17 +281,19 @@ export default function Client() {
               <Box sx={{ mb: 1 }}>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <Box sx={{ mb: 1 }}>
-                    <DatePicker
-                      label='Periode'
-                      views={['year', 'month']}
-                      openTo='month'
-                      value={month}
-                      onChange={(v) => v && setMonth(v)}
-                      format='MMMM YYYY'
-                      slotProps={{
-                        textField: { size: 'small', sx: { width: 220 } },
-                      }}
-                    />
+                    <div suppressHydrationWarning>
+                      <DatePicker
+                        label='Periode'
+                        views={['year', 'month']}
+                        openTo='month'
+                        value={month}
+                        onChange={(v) => v && setMonth(v)}
+                        format='MMMM YYYY'
+                        slotProps={{
+                          textField: { size: 'small', sx: { width: 220 } },
+                        }}
+                      />
+                    </div>
                   </Box>
                 </LocalizationProvider>
               </Box>

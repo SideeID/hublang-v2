@@ -219,9 +219,18 @@ function computeTotals(data: Row[]) {
   };
 }
 
-export default function Drd() {
+export default function Drd({
+  externalPeriode,
+  hideInternalFilter,
+}: {
+  externalPeriode?: string;
+  hideInternalFilter?: boolean;
+}) {
   const [month, setMonth] = React.useState(dayjs());
-  const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
+  const periode = React.useMemo(
+    () => externalPeriode ?? month.format('YYYYMM'),
+    [externalPeriode, month],
+  );
   const { data, isLoading, isError, error } = useDrd(periode, true);
   const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -293,23 +302,27 @@ export default function Drd() {
   return (
     <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ mb: 1 }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box sx={{ mb: 1 }}>
-            <DatePicker
-              label='Periode'
-              views={['year', 'month']}
-              openTo='month'
-              value={month}
-              onChange={(newVal) => newVal && setMonth(newVal)}
-              format='MMMM YYYY'
-              slotProps={{
-                textField: { size: 'small', sx: { width: 220 } },
-              }}
-            />
-          </Box>
-        </LocalizationProvider>
-      </Box>
+      {!hideInternalFilter && !externalPeriode && (
+        <Box sx={{ mb: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ mb: 1 }}>
+              <div suppressHydrationWarning>
+                <DatePicker
+                  label='Periode'
+                  views={['year', 'month']}
+                  openTo='month'
+                  value={month}
+                  onChange={(newVal) => newVal && setMonth(newVal)}
+                  format='MMMM YYYY'
+                  slotProps={{
+                    textField: { size: 'small', sx: { width: 220 } },
+                  }}
+                />
+              </div>
+            </Box>
+          </LocalizationProvider>
+        </Box>
+      )}
       <Box sx={{ height: 'auto', width: '100%' }}>
         {isLoading ? (
           <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>

@@ -127,7 +127,7 @@ export default function MonthlyComparisonGrids({
   thisMonth: MonthlyRow[];
   loading?: boolean;
 }) {
-  const computedRows: CombinedRow[] = React.useMemo(() => {
+  const computedData = React.useMemo(() => {
     const map = new Map<string, CombinedRow>();
     let id = 1;
     for (const r of thisMonth) {
@@ -151,15 +151,41 @@ export default function MonthlyComparisonGrids({
       const lastSum = (v.last_lancar ?? 0) + (v.last_tunggakan ?? 0);
       v.selisih_rp = lastSum - thisSum;
     }
-    return Array.from(map.values());
+    const dataRows = Array.from(map.values());
+    const totalRow: CombinedRow = {
+      id: -1,
+      wilayah: 'Total',
+      this_lancar: dataRows.reduce((sum, r) => sum + (r.this_lancar ?? 0), 0),
+      this_tunggakan: dataRows.reduce(
+        (sum, r) => sum + (r.this_tunggakan ?? 0),
+        0,
+      ),
+      this_efisiensi: dataRows.reduce(
+        (sum, r) => sum + (r.this_efisiensi ?? 0),
+        0,
+      ),
+      last_lancar: dataRows.reduce((sum, r) => sum + (r.last_lancar ?? 0), 0),
+      last_tunggakan: dataRows.reduce(
+        (sum, r) => sum + (r.last_tunggakan ?? 0),
+        0,
+      ),
+      last_efisiensi: dataRows.reduce(
+        (sum, r) => sum + (r.last_efisiensi ?? 0),
+        0,
+      ),
+      selisih_rp: dataRows.reduce((sum, r) => sum + (r.selisih_rp ?? 0), 0),
+    };
+    return { dataRows, totalRow };
   }, [thisMonth, lastMonth]);
 
-  const [rows, setRows] = React.useState<CombinedRow[]>(computedRows);
+  const { dataRows, totalRow } = computedData;
+
+  const [rows, setRows] = React.useState<CombinedRow[]>([]);
   React.useEffect(() => {
     if (!loading) {
-      setRows(computedRows);
+      setRows(dataRows);
     }
-  }, [computedRows, loading]);
+  }, [dataRows, loading]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -167,7 +193,7 @@ export default function MonthlyComparisonGrids({
         <Card variant='outlined' sx={{ width: '100%' }}>
           <CardContent>
             <Typography component='h2' variant='subtitle2' gutterBottom>
-              Perbandingan Bulanan
+              Laporan Penerimaan
             </Typography>
             <DataGridPro
               autoHeight
@@ -180,9 +206,10 @@ export default function MonthlyComparisonGrids({
               loading={loading}
               initialState={{
                 pagination: { paginationModel: { pageSize: 20 } },
+                pinnedColumns: { left: ['wilayah'] },
               }}
               pageSizeOptions={[10, 20, 50]}
-              disableColumnMenu
+              pinnedRows={{ bottom: [totalRow] }}
               slotProps={{
                 loadingOverlay: {
                   variant: 'skeleton',

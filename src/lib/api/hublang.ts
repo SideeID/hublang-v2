@@ -198,6 +198,21 @@ export function getDrd(periode: string) {
   return apiFetch<DrdResponse>(`/api/hublang/drd?${search}`);
 }
 
+export function getDrdKelurahan(periode: string) {
+  const search = new URLSearchParams({ periode }).toString();
+  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/kelurahan?${search}`);
+}
+
+export function getDrdKecamatan(periode: string) {
+  const search = new URLSearchParams({ periode }).toString();
+  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/kecamatan?${search}`);
+}
+
+export function getDrdGolongan(periode: string) {
+  const search = new URLSearchParams({ periode }).toString();
+  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/golongan?${search}`);
+}
+
 export interface RekapParams {
   periode: string;
   rekfrom?: string;

@@ -71,61 +71,65 @@ export default function DateRangeFilter({
       <Box sx={{ width: '100%', maxWidth: { xs: 360, sm: 'none' } }}>
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
           <Grid size={{ xs: 12, sm: 'auto' }}>
-            <DatePicker
-              label='Bulan awal'
-              views={['year', 'month']}
-              openTo='month'
-              format='MMMM YYYY'
-              reduceAnimations
-              value={start}
-              onChange={(newValue) => {
-                if (!newValue) return;
-                const startMonth = newValue.startOf('month');
-                let resultingEnd = end;
-                if (resultingEnd.isBefore(startMonth)) {
-                  resultingEnd = startMonth.endOf('month');
-                  onEndChange(resultingEnd);
-                }
-                onStartChange(startMonth);
-              }}
-              slotProps={{
-                textField: {
-                  size: 'small',
-                  fullWidth: true,
-                  sx: { width: { xs: '100%', sm: 180 } },
-                  inputProps: { readOnly: true },
-                },
-              }}
-            />
+            <div suppressHydrationWarning>
+              <DatePicker
+                label='Bulan awal'
+                views={['year', 'month']}
+                openTo='month'
+                format='MMMM YYYY'
+                reduceAnimations
+                value={start}
+                onChange={(newValue) => {
+                  if (!newValue) return;
+                  const startMonth = newValue.startOf('month');
+                  let resultingEnd = end;
+                  if (resultingEnd.isBefore(startMonth)) {
+                    resultingEnd = startMonth.endOf('month');
+                    onEndChange(resultingEnd);
+                  }
+                  onStartChange(startMonth);
+                }}
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    fullWidth: true,
+                    sx: { width: { xs: '100%', sm: 180 } },
+                    inputProps: { readOnly: true },
+                  },
+                }}
+              />
+            </div>
           </Grid>
 
           <Grid size={{ xs: 12, sm: 'auto' }}>
-            <DatePicker
-              label='Bulan akhir'
-              views={['year', 'month']}
-              openTo='month'
-              format='MMMM YYYY'
-              reduceAnimations
-              value={end}
-              onChange={(newValue) => {
-                if (!newValue) return;
-                const endMonth = newValue.endOf('month');
-                let resultingStart = start;
-                if (endMonth.isBefore(resultingStart)) {
-                  resultingStart = endMonth.startOf('month');
-                  onStartChange(resultingStart);
-                }
-                onEndChange(endMonth);
-              }}
-              slotProps={{
-                textField: {
-                  size: 'small',
-                  fullWidth: true,
-                  sx: { width: { xs: '100%', sm: 180 } },
-                  inputProps: { readOnly: true },
-                },
-              }}
-            />
+            <div suppressHydrationWarning>
+              <DatePicker
+                label='Bulan akhir'
+                views={['year', 'month']}
+                openTo='month'
+                format='MMMM YYYY'
+                reduceAnimations
+                value={end}
+                onChange={(newValue) => {
+                  if (!newValue) return;
+                  const endMonth = newValue.endOf('month');
+                  let resultingStart = start;
+                  if (endMonth.isBefore(resultingStart)) {
+                    resultingStart = endMonth.startOf('month');
+                    onStartChange(resultingStart);
+                  }
+                  onEndChange(endMonth);
+                }}
+                slotProps={{
+                  textField: {
+                    size: 'small',
+                    fullWidth: true,
+                    sx: { width: { xs: '100%', sm: 180 } },
+                    inputProps: { readOnly: true },
+                  },
+                }}
+              />
+            </div>
           </Grid>
 
           <Grid size={{ xs: 12, sm: 'auto' }}>

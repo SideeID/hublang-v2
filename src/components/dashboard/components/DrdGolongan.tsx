@@ -17,7 +17,7 @@ import {
   treeViewCustomizations,
 } from '@/components/dashboard/theme/customizations';
 import dayjs from 'dayjs';
-import { useDrd } from '@/hooks/useDrd';
+import { useDrdGolongan } from '@/hooks/useDrd';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -38,7 +38,6 @@ type Row = {
   id: number;
   no: number;
   golongan: string;
-  wilayah: string;
   pelanggan_total: number;
   pelanggan_aktif: number;
   pelanggan_pasif: number;
@@ -68,7 +67,6 @@ const columns: GridColDef<Row>[] = [
     flex: 1,
     colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
-  { field: 'wilayah', headerName: 'WILAYAH', minWidth: 160, flex: 1 },
   {
     field: 'pelanggan_total',
     headerName: 'Total',
@@ -207,10 +205,19 @@ function computeTotals(data: Row[]) {
   };
 }
 
-export default function DrdGolongan() {
+export default function DrdGolongan({
+  externalPeriode,
+  hideInternalFilter,
+}: {
+  externalPeriode?: string;
+  hideInternalFilter?: boolean;
+}) {
   const [month, setMonth] = React.useState(dayjs());
-  const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
-  const { data, isLoading, isError, error } = useDrd(periode, true);
+  const periode = React.useMemo(
+    () => externalPeriode ?? month.format('YYYYMM'),
+    [externalPeriode, month],
+  );
+  const { data, isLoading, isError, error } = useDrdGolongan(periode, true);
   const isMobile = useMediaQuery('(max-width:600px)');
 
   const toInt = (s?: string | number) => {
@@ -232,7 +239,6 @@ export default function DrdGolongan() {
         id: it.id,
         no: (map.get(it.wilayah)?.length ?? 0) + 1,
         golongan: it.nama,
-        wilayah: it.wilayah,
         pelanggan_total: toInt(it.totalpel),
         pelanggan_aktif: toInt(it.jmlaktif),
         pelanggan_pasif: toInt(it.jmlpelpasif),
@@ -264,23 +270,27 @@ export default function DrdGolongan() {
   return (
     <AppTheme themeComponents={xThemeComponents}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ mb: 1 }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Box sx={{ mb: 1 }}>
-            <DatePicker
-              label='Periode'
-              views={['year', 'month']}
-              openTo='month'
-              value={month}
-              onChange={(v) => v && setMonth(v)}
-              format='MMMM YYYY'
-              slotProps={{
-                textField: { size: 'small', sx: { width: 220 } },
-              }}
-            />
-          </Box>
-        </LocalizationProvider>
-      </Box>
+      {!hideInternalFilter && !externalPeriode && (
+        <Box sx={{ mb: 1 }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Box sx={{ mb: 1 }}>
+              <div suppressHydrationWarning>
+                <DatePicker
+                  label='Periode'
+                  views={['year', 'month']}
+                  openTo='month'
+                  value={month}
+                  onChange={(v) => v && setMonth(v)}
+                  format='MMMM YYYY'
+                  slotProps={{
+                    textField: { size: 'small', sx: { width: 220 } },
+                  }}
+                />
+              </div>
+            </Box>
+          </LocalizationProvider>
+        </Box>
+      )}
       <Box sx={{ height: 'auto', width: '100%' }}>
         {isLoading ? (
           <Box sx={{ py: 4, display: 'flex', justifyContent: 'center' }}>
@@ -302,7 +312,6 @@ export default function DrdGolongan() {
                 id: -1,
                 no: 0,
                 golongan: 'Total',
-                wilayah: '',
                 pelanggan_total: sum.pelanggan_total,
                 pelanggan_aktif: sum.pelanggan_aktif,
                 pelanggan_pasif: sum.pelanggan_pasif,

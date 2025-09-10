@@ -614,7 +614,6 @@ export default function CustomizedDataGrid({
   return (
     <DataGridPro
       density='compact'
-      disableColumnMenu
       disableRowSelectionOnClick
       rows={rows}
       columns={gridColumns}
