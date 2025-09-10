@@ -28,7 +28,6 @@ export default function TagihFilters({
 }: TagihFiltersProps) {
   const options = React.useMemo(() => {
     if (teamOptions && teamOptions.length > 0) return teamOptions;
-    // Dummy options until backend endpoint is available
     return ['Tim A', 'Tim B', 'Tim C'];
   }, [teamOptions]);
 
@@ -71,6 +70,14 @@ export default function TagihFilters({
             sx={{ width: { xs: '100%', sm: 150 } }}
             inputProps={{ min: 0 }}
           />
+        </Grid>
+        <Grid
+          size={{ xs: 12 }}
+          sx={{ display: { xs: 'block', sm: 'none' }, pl: 0.5, mt: -0.5 }}
+        >
+          <Typography variant='caption' color='text.secondary'>
+            Jml s/d brp
+          </Typography>
         </Grid>
         <Grid
           size={{ xs: 'auto' }}

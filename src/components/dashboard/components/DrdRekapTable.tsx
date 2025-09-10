@@ -9,9 +9,8 @@ import {
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-// Raw item as returned by API rekap array
 interface RawRekapItem {
-  wilayah: string;
+  nama: string;
   totalpel: number | string;
   jmlaktif: number | string;
   jmlpelpasif: number | string;
@@ -31,7 +30,7 @@ export interface DrdRekapTableProps {
 
 type Row = {
   id: number;
-  wilayah: string;
+  nama: string;
   pelanggan_total: number;
   pelanggan_aktif: number;
   pelanggan_pasif: number;
@@ -46,8 +45,8 @@ type Row = {
 
 const columns: GridColDef<Row>[] = [
   {
-    field: 'wilayah',
-    headerName: 'WILAYAH',
+    field: 'nama',
+    headerName: 'Nama',
     minWidth: 160,
     flex: 1,
     colSpan: (p) => (p?.row && (p.row as Row).id === -1 ? 3 : undefined),
@@ -176,7 +175,7 @@ export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
     if (!Array.isArray(data)) return [];
     return data.map((r, idx) => ({
       id: idx + 1,
-      wilayah: r.wilayah,
+      nama: r.nama,
       pelanggan_total: toNum(r.totalpel),
       pelanggan_aktif: toNum(r.jmlaktif),
       pelanggan_pasif: toNum(r.jmlpelpasif),
@@ -230,7 +229,7 @@ export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
   const pinnedBottom = [
     {
       id: -1,
-      wilayah: 'Total',
+      nama: 'Total',
       pelanggan_total: totals.sum.pelanggan_total,
       pelanggan_aktif: totals.sum.pelanggan_aktif,
       pelanggan_pasif: totals.sum.pelanggan_pasif,

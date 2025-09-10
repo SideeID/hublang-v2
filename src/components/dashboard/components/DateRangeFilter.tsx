@@ -20,6 +20,8 @@ export interface DateRangeFilterProps {
   end: Dayjs;
   onStartChange: (d: Dayjs) => void;
   onEndChange: (d: Dayjs) => void;
+  hideLocations?: boolean;
+  compact?: boolean;
   wilayahId?: string;
   onWilayahChange?: (value: string) => void;
   rayonId?: string;
@@ -35,6 +37,8 @@ export default function DateRangeFilter({
   end,
   onStartChange,
   onEndChange,
+  hideLocations = false,
+  compact = false,
   wilayahId = '',
   onWilayahChange,
   rayonId = '',
@@ -68,12 +72,18 @@ export default function DateRangeFilter({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Box sx={{ width: '100%', maxWidth: { xs: 360, sm: 'none' } }}>
+      <Box
+        sx={
+          compact
+            ? { width: 'auto' }
+            : { width: '100%', maxWidth: { xs: 360, sm: 'none' } }
+        }
+      >
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
           <Grid size={{ xs: 12, sm: 'auto' }}>
             <div suppressHydrationWarning>
               <DatePicker
-                label='Bulan awal'
+                label='Periode'
                 views={['year', 'month']}
                 openTo='month'
                 format='MMMM YYYY'
@@ -101,126 +111,111 @@ export default function DateRangeFilter({
             </div>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <div suppressHydrationWarning>
-              <DatePicker
-                label='Bulan akhir'
-                views={['year', 'month']}
-                openTo='month'
-                format='MMMM YYYY'
-                reduceAnimations
-                value={end}
-                onChange={(newValue) => {
-                  if (!newValue) return;
-                  const endMonth = newValue.endOf('month');
-                  let resultingStart = start;
-                  if (endMonth.isBefore(resultingStart)) {
-                    resultingStart = endMonth.startOf('month');
-                    onStartChange(resultingStart);
-                  }
-                  onEndChange(endMonth);
-                }}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    fullWidth: true,
-                    sx: { width: { xs: '100%', sm: 180 } },
-                    inputProps: { readOnly: true },
-                  },
-                }}
-              />
-            </div>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
-              <InputLabel id='wilayah-label'>Wilayah</InputLabel>
-              <Select
-                labelId='wilayah-label'
-                id='wilayah'
-                value={wilayahId}
-                label='Wilayah'
-                onChange={handleWilayahChange}
+          {!hideLocations && (
+            <Grid size={{ xs: 12, sm: 'auto' }}>
+              <FormControl
+                size='small'
+                fullWidth
+                sx={{ minWidth: { sm: 160 } }}
               >
-                <MenuItem value=''>Semua Wilayah</MenuItem>
-                {(wilayahResp?.data || []).map((w) => (
-                  <MenuItem key={w.id} value={String(w.id)}>
-                    {w.nama}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                <InputLabel id='wilayah-label'>Wilayah</InputLabel>
+                <Select
+                  labelId='wilayah-label'
+                  id='wilayah'
+                  value={wilayahId}
+                  label='Wilayah'
+                  onChange={handleWilayahChange}
+                >
+                  <MenuItem value=''>Semua Wilayah</MenuItem>
+                  {(wilayahResp?.data || []).map((w) => (
+                    <MenuItem key={w.id} value={String(w.id)}>
+                      {w.nama}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl
-              size='small'
-              fullWidth
-              sx={{ minWidth: { sm: 160 } }}
-              disabled={!wilayahId}
-            >
-              <InputLabel id='rayon-label'>Wilayah Rayon</InputLabel>
-              <Select
-                labelId='rayon-label'
-                id='rayon'
-                value={rayonId}
-                label='Wilayah Rayon'
-                onChange={handleRayonChange}
+          {!hideLocations && (
+            <Grid size={{ xs: 12, sm: 'auto' }}>
+              <FormControl
+                size='small'
+                fullWidth
+                sx={{ minWidth: { sm: 160 } }}
+                disabled={!wilayahId}
               >
-                <MenuItem value=''>Semua Rayon</MenuItem>
-                {(rayonResp?.data || []).map((r) => (
-                  <MenuItem key={r.id} value={String(r.id)}>
-                    {r.kode_rayon ? `${r.kode_rayon} - ${r.nama}` : r.nama}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                <InputLabel id='rayon-label'>Wilayah Rayon</InputLabel>
+                <Select
+                  labelId='rayon-label'
+                  id='rayon'
+                  value={rayonId}
+                  label='Wilayah Rayon'
+                  onChange={handleRayonChange}
+                >
+                  <MenuItem value=''>Semua Rayon</MenuItem>
+                  {(rayonResp?.data || []).map((r) => (
+                    <MenuItem key={r.id} value={String(r.id)}>
+                      {r.kode_rayon ? `${r.kode_rayon} - ${r.nama}` : r.nama}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl size='small' fullWidth sx={{ minWidth: { sm: 160 } }}>
-              <InputLabel id='kecamatan-label'>Kecamatan</InputLabel>
-              <Select
-                labelId='kecamatan-label'
-                id='kecamatan'
-                value={kecamatanId}
-                label='Kecamatan'
-                onChange={handleKecamatanChange}
+          {!hideLocations && (
+            <Grid size={{ xs: 12, sm: 'auto' }}>
+              <FormControl
+                size='small'
+                fullWidth
+                sx={{ minWidth: { sm: 160 } }}
               >
-                <MenuItem value=''>Semua Kecamatan</MenuItem>
-                {(kecResp?.data || []).map((k) => (
-                  <MenuItem key={k.id} value={String(k.id)}>
-                    {k.nama}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                <InputLabel id='kecamatan-label'>Kecamatan</InputLabel>
+                <Select
+                  labelId='kecamatan-label'
+                  id='kecamatan'
+                  value={kecamatanId}
+                  label='Kecamatan'
+                  onChange={handleKecamatanChange}
+                >
+                  <MenuItem value=''>Semua Kecamatan</MenuItem>
+                  {(kecResp?.data || []).map((k) => (
+                    <MenuItem key={k.id} value={String(k.id)}>
+                      {k.nama}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
 
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <FormControl
-              size='small'
-              fullWidth
-              sx={{ minWidth: { sm: 160 } }}
-              disabled={!kecamatanId}
-            >
-              <InputLabel id='kelurahan-label'>Kelurahan</InputLabel>
-              <Select
-                labelId='kelurahan-label'
-                id='kelurahan'
-                value={kelurahanId}
-                label='Kelurahan'
-                onChange={handleKelurahanChange}
+          {!hideLocations && (
+            <Grid size={{ xs: 12, sm: 'auto' }}>
+              <FormControl
+                size='small'
+                fullWidth
+                sx={{ minWidth: { sm: 160 } }}
+                disabled={!kecamatanId}
               >
-                <MenuItem value=''>Semua Kelurahan</MenuItem>
-                {(kelResp?.data || []).map((kel) => (
-                  <MenuItem key={kel.id} value={String(kel.id)}>
-                    {kel.nama}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
+                <InputLabel id='kelurahan-label'>Kelurahan</InputLabel>
+                <Select
+                  labelId='kelurahan-label'
+                  id='kelurahan'
+                  value={kelurahanId}
+                  label='Kelurahan'
+                  onChange={handleKelurahanChange}
+                >
+                  <MenuItem value=''>Semua Kelurahan</MenuItem>
+                  {(kelResp?.data || []).map((kel) => (
+                    <MenuItem key={kel.id} value={String(kel.id)}>
+                      {kel.nama}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </LocalizationProvider>

@@ -239,8 +239,9 @@ const columns: GridColDef<Row>[] = [
   },
 ];
 
+// Removed the single-field parent group (Kasir/Loket) to avoid duplicated header text.
 const columnGroupingModel: GridColumnGroupingModel = [
-  { groupId: 'Kasir', children: [{ field: 'kasir' }] },
+  // { groupId: 'Kasir', children: [{ field: 'kasir' }] },
   // { groupId: 'Jumlah Rayon', children: [{ field: 'jumlahRayon' }] },
   {
     groupId: 'Total DRD Penagihan',
@@ -450,7 +451,6 @@ export default function CustomizedDataGrid({
   fetchParams?: RekapParams;
   source?: 'kasir' | 'loket';
 }) {
-  // Compute dynamic column headers/group titles based on source
   const gridColumns = React.useMemo<GridColDef<Row>[]>(
     () =>
       columns.map((c) =>
@@ -465,13 +465,8 @@ export default function CustomizedDataGrid({
   );
 
   const gridColumnGroupingModel = React.useMemo<GridColumnGroupingModel>(
-    () =>
-      columnGroupingModel.map((g) =>
-        g.groupId === 'Kasir'
-          ? { ...g, groupId: source === 'loket' ? 'Loket' : 'Kasir' }
-          : g,
-      ),
-    [source],
+    () => columnGroupingModel,
+    [],
   );
 
   const toNum = React.useCallback((s?: string) => {
@@ -546,6 +541,10 @@ export default function CustomizedDataGrid({
     ? [
         'rekap',
         fetchParams.periode,
+        fetchParams.wil_id ?? '',
+        fetchParams.rayon_id ?? '',
+        fetchParams.kec_id ?? '',
+        fetchParams.kel_id ?? '',
         fetchParams.rekfrom ?? '',
         fetchParams.rekto ?? '',
       ].join('|')

@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import MonthlyComparisonGrids from './MonthlyComparisonGrids';
 import RegionalLTBarChart from './RegionalLTBarChart';
 import TotalReceiptPieChart from './TotalReceiptPieChart';
-import DateRangeFilter from './DateRangeFilter';
+import DateRangeFullFilter from './DateRangeFullFilter';
 import dayjs, { Dayjs } from 'dayjs';
 import { usePenerimaan } from '@/hooks/usePenerimaan';
 import type { PenerimaanItem } from '@/lib/api/hublang';
@@ -72,7 +72,7 @@ export default function MainGrid() {
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Box sx={{ mb: 1.5 }}>
-        <DateRangeFilter
+        <DateRangeFullFilter
           start={startD}
           end={endD}
           onStartChange={setStartD}

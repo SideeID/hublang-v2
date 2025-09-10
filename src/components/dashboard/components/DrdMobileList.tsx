@@ -17,6 +17,8 @@ export default function DrdMobileList({ rows }: { rows: MobileRow[] }) {
       minWidth: 140,
       headerAlign: 'center',
       align: 'left',
+      colSpan: (p) => (p.row?.id === -1 ? 2 : undefined),
+      renderCell: (p) => (p.row?.id === -1 ? 'Total' : p.value),
     },
     {
       field: 'total_tagihan',
@@ -25,14 +27,20 @@ export default function DrdMobileList({ rows }: { rows: MobileRow[] }) {
       width: 160,
       headerAlign: 'center',
       align: 'right',
-      // renderCell ensures value is displayed and allows styling
-      renderCell: (params: { value?: number | null }) => {
-        const v = params.value;
-        if (v == null) return '';
-        return String(v);
-      },
+      colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
     },
   ];
+
+  const pinnedBottom = React.useMemo(
+    () => [
+      {
+        id: -1,
+        wilayah: 'Total',
+        total_tagihan: rows.reduce((acc, r) => acc + (r.total_tagihan || 0), 0),
+      },
+    ],
+    [rows],
+  );
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -43,8 +51,9 @@ export default function DrdMobileList({ rows }: { rows: MobileRow[] }) {
         density='compact'
         hideFooter
         disableRowSelectionOnClick
+        pinnedRows={{ bottom: pinnedBottom }}
+        getRowClassName={(p) => (p.id === -1 ? 'total-row' : '')}
         sx={{
-          // smaller font and tighter padding for mobile
           '& .MuiDataGrid-cell': {
             py: 0.5,
             px: 1,
@@ -62,6 +71,10 @@ export default function DrdMobileList({ rows }: { rows: MobileRow[] }) {
             borderRight: '1px solid rgba(0,0,0,0.08)',
           },
           '& .MuiDataGrid-columnSeparator': { display: 'none' },
+          '& .MuiDataGrid-row.total-row .MuiDataGrid-cell': {
+            fontWeight: 'bold',
+            backgroundColor: 'action.hover',
+          },
         }}
       />
     </Box>

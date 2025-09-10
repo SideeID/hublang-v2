@@ -46,7 +46,6 @@ export default function DrdUnifiedPage() {
   const [month, setMonth] = React.useState<Dayjs>(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const [selected, setSelected] = React.useState<OptionKey | ''>('');
-  // Avoid hydration mismatch by waiting until mounted before rendering date picker
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);

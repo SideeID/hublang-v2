@@ -26,8 +26,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DrdMobileList from './DrdMobileList';
-import DrdRekapTable from './DrdRekapTable';
-import type { DrdRekapTableProps } from './DrdRekapTable';
+// DrdRekapTable dihapus sesuai permintaan; import dihilangkan
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -353,13 +352,6 @@ export default function DrdKelurahan({
           <DrdMobileList rows={mobileRows} />
         ) : (
           <>
-            <DrdRekapTable
-              data={
-                (data as { data?: { rekap?: DrdRekapTableProps['data'] } })
-                  ?.data?.rekap || []
-              }
-              title='Rekap Wilayah'
-            />
             {Array.from(grouped.entries()).map(([wilayah, rows]) => {
               const { sum, avg } = computeTotals(rows);
               const pinnedBottom = [

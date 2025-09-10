@@ -215,8 +215,12 @@ export function getDrdGolongan(periode: string) {
 
 export interface RekapParams {
   periode: string;
+  wil_id?: string;
+  rayon_id?: string;
   rekfrom?: string;
   rekto?: string;
+  kec_id?: string;
+  kel_id?: string;
 }
 
 export function getRekap(params: RekapParams) {

@@ -11,6 +11,12 @@ import AppNavbar from '@/components/dashboard/components/AppNavbar';
 import DateRangeFilter from '@/components/dashboard/components/DateRangeFilter';
 import CustomizedDataGrid from '@/components/dashboard/components/CustomizedDataGrid';
 import TagihFilters from '@/components/dashboard/components/TagihFilters';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import { useTimTagih } from '@/hooks/useTimTagih';
@@ -41,6 +47,42 @@ export default function Client() {
   const [maxJmlrek, setMaxJmlrek] = React.useState<number | undefined>();
   const [timTagih, setTimTagih] = React.useState<string>('');
 
+  const [draftWilayahId, setDraftWilayahId] = React.useState<string>('');
+  const [draftRayonId, setDraftRayonId] = React.useState<string>('');
+  const [draftKecamatanId, setDraftKecamatanId] = React.useState<string>('');
+  const [draftKelurahanId, setDraftKelurahanId] = React.useState<string>('');
+  const [draftMinJmlrek, setDraftMinJmlrek] = React.useState<
+    number | undefined
+  >();
+  const [draftMaxJmlrek, setDraftMaxJmlrek] = React.useState<
+    number | undefined
+  >();
+  const [draftTimTagih, setDraftTimTagih] = React.useState<string>('');
+
+  const [filtersOpen, setFiltersOpen] = React.useState(false);
+
+  const openFilters = () => {
+    setDraftWilayahId(wilayahId);
+    setDraftRayonId(rayonId);
+    setDraftKecamatanId(kecamatanId);
+    setDraftKelurahanId(kelurahanId);
+    setDraftMinJmlrek(minJmlrek);
+    setDraftMaxJmlrek(maxJmlrek);
+    setDraftTimTagih(timTagih);
+    setFiltersOpen(true);
+  };
+  const closeFilters = () => setFiltersOpen(false);
+  const applyFilters = () => {
+    setWilayahId(draftWilayahId);
+    setRayonId(draftRayonId);
+    setKecamatanId(draftKecamatanId);
+    setKelurahanId(draftKelurahanId);
+    setMinJmlrek(draftMinJmlrek);
+    setMaxJmlrek(draftMaxJmlrek);
+    setTimTagih(draftTimTagih);
+    setFiltersOpen(false);
+  };
+
   const periode = startD.format('YYYYMM');
 
   const { data: timTagihResp } = useTimTagih(true);
@@ -56,10 +98,22 @@ export default function Client() {
   const fetchParams: RekapParams = React.useMemo(
     () => ({
       periode,
+      wil_id: wilayahId || undefined,
+      rayon_id: rayonId || undefined,
       rekfrom: minJmlrek !== undefined ? String(minJmlrek) : undefined,
       rekto: maxJmlrek !== undefined ? String(maxJmlrek) : undefined,
+      kec_id: kecamatanId || undefined,
+      kel_id: kelurahanId || undefined,
     }),
-    [periode, minJmlrek, maxJmlrek],
+    [
+      periode,
+      wilayahId,
+      rayonId,
+      kecamatanId,
+      kelurahanId,
+      minJmlrek,
+      maxJmlrek,
+    ],
   );
 
   return (
@@ -75,39 +129,80 @@ export default function Client() {
           >
             <Header current='Penerimaan Petugas Tagih' />
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              <Box sx={{ mb: 1.5 }}>
+              <Box
+                sx={{
+                  mb: 1.5,
+                  display: 'flex',
+                  gap: 1,
+                  flexWrap: 'nowrap',
+                  alignItems: 'center',
+                }}
+              >
                 <DateRangeFilter
                   start={startD}
                   end={endD}
                   onStartChange={setStartD}
                   onEndChange={setEndD}
-                  wilayahId={wilayahId}
-                  onWilayahChange={(v) => {
-                    setWilayahId(v);
-                    setRayonId('');
-                  }}
-                  rayonId={rayonId}
-                  onRayonChange={setRayonId}
-                  kecamatanId={kecamatanId}
-                  onKecamatanChange={(v) => {
-                    setKecamatanId(v);
-                    setKelurahanId('');
-                  }}
-                  kelurahanId={kelurahanId}
-                  onKelurahanChange={setKelurahanId}
+                  hideLocations
+                  compact
                 />
+                <Button variant='outlined' size='small' onClick={openFilters}>
+                  Filter Lainnya
+                </Button>
               </Box>
-              <Box sx={{ mb: 2 }}>
-                <TagihFilters
-                  minJmlrek={minJmlrek}
-                  maxJmlrek={maxJmlrek}
-                  onMinJmlrekChange={setMinJmlrek}
-                  onMaxJmlrekChange={setMaxJmlrek}
-                  timTagih={timTagih}
-                  onTimTagihChange={setTimTagih}
-                  teamOptions={teamOptions}
-                />
-              </Box>
+
+              <Dialog
+                open={filtersOpen}
+                onClose={closeFilters}
+                fullWidth
+                maxWidth='md'
+              >
+                <DialogTitle>Filter Data</DialogTitle>
+                <DialogContent dividers>
+                  <Typography variant='subtitle2' sx={{ mb: 1 }}>
+                    Lokasi
+                  </Typography>
+                  <DateRangeFilter
+                    start={startD}
+                    end={endD}
+                    onStartChange={setStartD}
+                    onEndChange={setEndD}
+                    wilayahId={draftWilayahId}
+                    onWilayahChange={(v) => {
+                      setDraftWilayahId(v);
+                      setDraftRayonId('');
+                    }}
+                    rayonId={draftRayonId}
+                    onRayonChange={setDraftRayonId}
+                    kecamatanId={draftKecamatanId}
+                    onKecamatanChange={(v) => {
+                      setDraftKecamatanId(v);
+                      setDraftKelurahanId('');
+                    }}
+                    kelurahanId={draftKelurahanId}
+                    onKelurahanChange={setDraftKelurahanId}
+                  />
+                  <Divider sx={{ my: 2 }} />
+                  <Typography variant='subtitle2' sx={{ mb: 1 }}>
+                    Penerimaan
+                  </Typography>
+                  <TagihFilters
+                    minJmlrek={draftMinJmlrek}
+                    maxJmlrek={draftMaxJmlrek}
+                    onMinJmlrekChange={setDraftMinJmlrek}
+                    onMaxJmlrekChange={setDraftMaxJmlrek}
+                    timTagih={draftTimTagih}
+                    onTimTagihChange={setDraftTimTagih}
+                    teamOptions={teamOptions}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={closeFilters}>Batal</Button>
+                  <Button variant='contained' onClick={applyFilters}>
+                    Terapkan
+                  </Button>
+                </DialogActions>
+              </Dialog>
               <Grid container spacing={2} columns={12}>
                 <Grid size={{ xs: 12 }}>
                   <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
