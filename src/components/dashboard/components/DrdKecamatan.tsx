@@ -304,15 +304,18 @@ export default function DrdKecamatan({
     return map;
   }, [data]);
 
-  // Simplified rows for mobile
-  const mobileRows = React.useMemo(() => {
-    const flat: Row[] = Array.from(grouped.values()).flat();
-    return flat.map((r) => ({
-      id: r.id,
-      wilayah: r.kecamatan,
-      total_tagihan: r.total_tagihan,
-    }));
-  }, [grouped]);
+  const mobileGroups = React.useMemo(
+    () =>
+      Array.from(grouped.entries()).map(([key, rows]) => ({
+        groupKey: key,
+        rows: rows.map((r) => ({
+          id: r.id,
+          nama: r.kecamatan,
+          total_tagihan: r.total_tagihan,
+        })),
+      })),
+    [grouped],
+  );
 
   return (
     <AppTheme themeComponents={xThemeComponents}>
@@ -350,7 +353,7 @@ export default function DrdKecamatan({
         ) : Array.from(grouped.entries()).length === 0 ? (
           <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
         ) : isMobile ? (
-          <DrdMobileList rows={mobileRows} />
+          <DrdMobileList groups={mobileGroups} />
         ) : (
           <>
             {Array.from(grouped.entries()).map(([wilayah, rows]) => {

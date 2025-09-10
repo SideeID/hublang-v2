@@ -308,14 +308,18 @@ export default function DrdGolongan({
     return map;
   }, [data]);
 
-  const mobileRows = React.useMemo(() => {
-    const flat: Row[] = Array.from(grouped.values()).flat();
-    return flat.map((r) => ({
-      id: r.id,
-      wilayah: r.golongan,
-      total_tagihan: r.total_tagihan,
-    }));
-  }, [grouped]);
+  const mobileGroups = React.useMemo(
+    () =>
+      Array.from(grouped.entries()).map(([key, rows]) => ({
+        groupKey: key,
+        rows: rows.map((r) => ({
+          id: r.id,
+          nama: r.golongan,
+          total_tagihan: r.total_tagihan,
+        })),
+      })),
+    [grouped],
+  );
 
   return (
     <AppTheme themeComponents={xThemeComponents}>
@@ -366,10 +370,7 @@ export default function DrdGolongan({
               />
             </Box>
             <Box sx={{ mt: 2 }}>
-              <Typography variant='h6' sx={{ mb: 1 }}>
-                Daftar Golongan
-              </Typography>
-              <DrdMobileList rows={mobileRows} />
+              <DrdMobileList groups={mobileGroups} />
             </Box>
           </>
         ) : (

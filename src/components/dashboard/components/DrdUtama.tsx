@@ -289,13 +289,17 @@ export default function Drd({
     [sum, avg],
   );
 
-  const mobileRows = React.useMemo(
-    () =>
-      rows.map((r) => ({
-        id: r.id,
-        wilayah: r.golongan,
-        total_tagihan: r.total_tagihan,
-      })),
+  const mobileGroups = React.useMemo(
+    () => [
+      {
+        groupKey: 'Data',
+        rows: rows.map((r) => ({
+          id: r.id,
+          nama: r.golongan,
+          total_tagihan: r.total_tagihan,
+        })),
+      },
+    ],
     [rows],
   );
 
@@ -335,7 +339,7 @@ export default function Drd({
         ) : rows.length === 0 ? (
           <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
         ) : isMobile ? (
-          <DrdMobileList rows={mobileRows} />
+          <DrdMobileList groups={mobileGroups} />
         ) : (
           <DataGridPro
             rows={rows}
