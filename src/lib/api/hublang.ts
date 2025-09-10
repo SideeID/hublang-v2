@@ -221,6 +221,7 @@ export interface RekapParams {
   rekto?: string;
   kec_id?: string;
   kel_id?: string;
+  tim_tagih?: string;
 }
 
 export function getRekap(params: RekapParams) {

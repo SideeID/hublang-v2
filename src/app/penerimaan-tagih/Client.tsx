@@ -61,7 +61,6 @@ export default function Client() {
   const [draftMaxJmlrek, setDraftMaxJmlrek] = React.useState<
     number | undefined
   >();
-  // Removed draft state for timTagih since it's controlled directly outside the modal
 
   const [filtersOpen, setFiltersOpen] = React.useState(false);
 
@@ -106,6 +105,7 @@ export default function Client() {
       rekto: maxJmlrek !== undefined ? String(maxJmlrek) : undefined,
       kec_id: kecamatanId || undefined,
       kel_id: kelurahanId || undefined,
+      tim_tagih: timTagih || undefined,
     }),
     [
       periode,
@@ -115,6 +115,7 @@ export default function Client() {
       kelurahanId,
       minJmlrek,
       maxJmlrek,
+      timTagih,
     ],
   );
 
@@ -131,43 +132,49 @@ export default function Client() {
           >
             <Header current='Penerimaan Petugas Tagih' />
             <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
-              <Box
-                sx={{
-                  mb: 1.5,
-                  display: 'flex',
-                  gap: 1,
-                  flexWrap: 'nowrap',
-                  alignItems: 'center',
-                }}
-              >
-                <DateRangeFilter
-                  start={startD}
-                  end={endD}
-                  onStartChange={setStartD}
-                  onEndChange={setEndD}
-                  hideLocations
-                  compact
-                />
-                <FormControl size='small' sx={{ minWidth: 170 }}>
-                  <InputLabel id='tim-tagih-label'>Tim Tagih</InputLabel>
-                  <Select
-                    labelId='tim-tagih-label'
-                    label='Tim Tagih'
-                    value={timTagih}
-                    onChange={(e) => setTimTagih(e.target.value)}
-                    displayEmpty={false}
+              <Box component='section' sx={{ width: '100%', mb: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gap: 1,
+                    flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                    alignItems: 'center',
+                  }}
+                >
+                  <DateRangeFilter
+                    start={startD}
+                    end={endD}
+                    onStartChange={setStartD}
+                    onEndChange={setEndD}
+                    hideLocations
+                    compact
+                  />
+                  <FormControl size='small' sx={{ minWidth: 170 }}>
+                    <InputLabel id='tim-tagih-label'>Tim Tagih</InputLabel>
+                    <Select
+                      labelId='tim-tagih-label'
+                      label='Tim Tagih'
+                      value={timTagih}
+                      onChange={(e) => setTimTagih(e.target.value)}
+                      displayEmpty={false}
+                    >
+                      <MenuItem value=''>Semua</MenuItem>
+                      {teamOptions.map((opt) => (
+                        <MenuItem key={opt.id} value={opt.id}>
+                          {opt.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    variant='outlined'
+                    size='small'
+                    onClick={openFilters}
+                    sx={{ whiteSpace: 'nowrap' }}
                   >
-                    <MenuItem value=''>Semua</MenuItem>
-                    {teamOptions.map((opt) => (
-                      <MenuItem key={opt.id} value={opt.id}>
-                        {opt.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Button variant='outlined' size='small' onClick={openFilters}>
-                  Filter Lainnya
-                </Button>
+                    Filter Lainnya
+                  </Button>
+                </Box>
               </Box>
 
               <Dialog
@@ -220,24 +227,37 @@ export default function Client() {
                   </Button>
                 </DialogActions>
               </Dialog>
+              {/* Data Grids Section */}
               <Grid container spacing={2} columns={12}>
                 <Grid size={{ xs: 12 }}>
-                  <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-                    Rekap Penerimaan Kasir
-                  </Typography>
-                  <CustomizedDataGrid
-                    fetchParams={fetchParams}
-                    source='kasir'
-                  />
+                  <Box component='section' sx={{ width: '100%' }}>
+                    <Typography
+                      component='h2'
+                      variant='h6'
+                      sx={{ mb: 2, position: 'relative', zIndex: 2 }}
+                    >
+                      Rekap Penerimaan Kasir
+                    </Typography>
+                    <CustomizedDataGrid
+                      fetchParams={fetchParams}
+                      source='kasir'
+                    />
+                  </Box>
                 </Grid>
                 <Grid size={{ xs: 12 }}>
-                  <Typography component='h2' variant='h6' sx={{ mb: 2 }}>
-                    Rekap Penerimaan Loket
-                  </Typography>
-                  <CustomizedDataGrid
-                    fetchParams={fetchParams}
-                    source='loket'
-                  />
+                  <Box component='section' sx={{ width: '100%' }}>
+                    <Typography
+                      component='h2'
+                      variant='h6'
+                      sx={{ mb: 2, position: 'relative', zIndex: 2 }}
+                    >
+                      Rekap Penerimaan Loket
+                    </Typography>
+                    <CustomizedDataGrid
+                      fetchParams={fetchParams}
+                      source='loket'
+                    />
+                  </Box>
                 </Grid>
               </Grid>
             </Box>

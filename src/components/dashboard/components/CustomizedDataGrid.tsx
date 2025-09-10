@@ -239,8 +239,8 @@ const columns: GridColDef<Row>[] = [
   },
 ];
 
-// Removed the single-field parent group (Kasir/Loket) to avoid duplicated header text.
-const columnGroupingModel: GridColumnGroupingModel = [
+// Base grouping model (excluding the dynamic single-field Kasir/Loket group which will be added per source).
+const baseColumnGroupingModel: GridColumnGroupingModel = [
   // { groupId: 'Kasir', children: [{ field: 'kasir' }] },
   // { groupId: 'Jumlah Rayon', children: [{ field: 'jumlahRayon' }] },
   {
@@ -464,10 +464,13 @@ export default function CustomizedDataGrid({
     [source],
   );
 
-  const gridColumnGroupingModel = React.useMemo<GridColumnGroupingModel>(
-    () => columnGroupingModel,
-    [],
-  );
+  const gridColumnGroupingModel = React.useMemo<GridColumnGroupingModel>(() => {
+    const parentLabel = source === 'loket' ? 'Loket' : 'Kasir';
+    return [
+      { groupId: parentLabel, children: [{ field: 'kasir' }] },
+      ...baseColumnGroupingModel,
+    ];
+  }, [source]);
 
   const toNum = React.useCallback((s?: string) => {
     const n = Number(s);
@@ -547,6 +550,7 @@ export default function CustomizedDataGrid({
         fetchParams.kel_id ?? '',
         fetchParams.rekfrom ?? '',
         fetchParams.rekto ?? '',
+        fetchParams.tim_tagih ?? '',
       ].join('|')
     : null;
   const {
