@@ -46,6 +46,11 @@ export default function DrdUnifiedPage() {
   const [month, setMonth] = React.useState<Dayjs>(dayjs());
   const periode = React.useMemo(() => month.format('YYYYMM'), [month]);
   const [selected, setSelected] = React.useState<OptionKey | ''>('');
+  // Avoid hydration mismatch by waiting until mounted before rendering date picker
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const renderSelected = () => {
     if (!selected) return null;
@@ -96,8 +101,8 @@ export default function DrdUnifiedPage() {
                 spacing={2}
                 sx={{ mb: 2 }}
               >
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <div suppressHydrationWarning>
+                {mounted && (
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label='Periode'
                       views={['year', 'month']}
@@ -109,8 +114,8 @@ export default function DrdUnifiedPage() {
                         textField: { size: 'small', sx: { width: 220 } },
                       }}
                     />
-                  </div>
-                </LocalizationProvider>
+                  </LocalizationProvider>
+                )}
                 <TextField
                   select
                   size='small'

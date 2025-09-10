@@ -26,6 +26,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DrdMobileList from './DrdMobileList';
+import DrdRekapTable from './DrdRekapTable';
+import type { DrdRekapTableProps } from './DrdRekapTable';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -352,79 +354,88 @@ export default function DrdGolongan({
         ) : isMobile ? (
           <DrdMobileList rows={mobileRows} />
         ) : (
-          Array.from(grouped.entries()).map(([wilayah, rows]) => {
-            const { sum, avg } = computeTotals(rows);
-            const pinnedBottom = [
-              {
-                id: -1,
-                no: 0,
-                golongan: 'Total',
-                pelanggan_total: sum.pelanggan_total,
-                pelanggan_aktif: sum.pelanggan_aktif,
-                pelanggan_pasif: sum.pelanggan_pasif,
-                pelanggan_m3: sum.pelanggan_m3,
-                tagihan_harga_air: sum.tagihan_harga_air,
-                tagihan_administrasi: sum.tagihan_administrasi,
-                tagihan_data_meter: sum.tagihan_data_meter,
-                total_tagihan: sum.total_tagihan,
-                rata_m3: avg.rata_m3,
-                rata_rupiah: avg.rata_rupiah,
-              } as unknown as Row,
-            ];
-            return (
-              <Box key={wilayah} sx={{ mb: 3 }}>
-                <Typography variant='h6' sx={{ mb: 1 }}>
-                  {wilayah}
-                </Typography>
-                <DataGridPro
-                  rows={rows}
-                  columns={columns}
-                  columnGroupingModel={columnGroupingModel}
-                  density='compact'
-                  autoHeight
-                  disableRowSelectionOnClick
-                  hideFooter
-                  pinnedRows={{ bottom: pinnedBottom }}
-                  sx={{
-                    '& .MuiDataGrid-columnHeaderTitle': {
-                      textAlign: 'center',
-                    },
-                    '& .MuiDataGrid-columnHeaderTitleContainer': {
-                      justifyContent: 'center',
-                    },
-                    '& .MuiDataGrid-columnGroupHeaderTitle': {
-                      textAlign: 'center',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    },
-                    '& .MuiDataGrid-columnGroupHeader': {
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    },
+          <>
+            <DrdRekapTable
+              data={
+                (data as { data?: { rekap?: DrdRekapTableProps['data'] } })
+                  ?.data?.rekap || []
+              }
+              title='Rekap Wilayah'
+            />
+            {Array.from(grouped.entries()).map(([wilayah, rows]) => {
+              const { sum, avg } = computeTotals(rows);
+              const pinnedBottom = [
+                {
+                  id: -1,
+                  no: 0,
+                  golongan: 'Total',
+                  pelanggan_total: sum.pelanggan_total,
+                  pelanggan_aktif: sum.pelanggan_aktif,
+                  pelanggan_pasif: sum.pelanggan_pasif,
+                  pelanggan_m3: sum.pelanggan_m3,
+                  tagihan_harga_air: sum.tagihan_harga_air,
+                  tagihan_administrasi: sum.tagihan_administrasi,
+                  tagihan_data_meter: sum.tagihan_data_meter,
+                  total_tagihan: sum.total_tagihan,
+                  rata_m3: avg.rata_m3,
+                  rata_rupiah: avg.rata_rupiah,
+                } as unknown as Row,
+              ];
+              return (
+                <Box key={wilayah} sx={{ mb: 3 }}>
+                  <Typography variant='h6' sx={{ mb: 1 }}>
+                    {wilayah}
+                  </Typography>
+                  <DataGridPro
+                    rows={rows}
+                    columns={columns}
+                    columnGroupingModel={columnGroupingModel}
+                    density='compact'
+                    autoHeight
+                    disableRowSelectionOnClick
+                    hideFooter
+                    pinnedRows={{ bottom: pinnedBottom }}
+                    sx={{
+                      '& .MuiDataGrid-columnHeaderTitle': {
+                        textAlign: 'center',
+                      },
+                      '& .MuiDataGrid-columnHeaderTitleContainer': {
+                        justifyContent: 'center',
+                      },
+                      '& .MuiDataGrid-columnGroupHeaderTitle': {
+                        textAlign: 'center',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                      '& .MuiDataGrid-columnGroupHeader': {
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
 
-                    '& .MuiDataGrid-columnHeaders': {
-                      borderBottom: '2px solid rgba(0,0,0,0.08)',
-                    },
-                    '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
-                      borderRight: '1px solid rgba(0,0,0,0.08)',
-                      borderBottom: '1px solid rgba(0,0,0,0.08)',
-                    },
-                    '& .MuiDataGrid-row': {
-                      border: '1px solid rgba(0,0,0,0.06)',
-                    },
-                    '& .MuiDataGrid-cell': {
-                      border: '1px solid rgba(0,0,0,0.06)',
-                    },
-                    '& .MuiDataGrid-columnSeparator': {
-                      display: 'none',
-                    },
-                  }}
-                />
-              </Box>
-            );
-          })
+                      '& .MuiDataGrid-columnHeaders': {
+                        borderBottom: '2px solid rgba(0,0,0,0.08)',
+                      },
+                      '& .MuiDataGrid-columnHeader, & .MuiDataGrid-cell': {
+                        borderRight: '1px solid rgba(0,0,0,0.08)',
+                        borderBottom: '1px solid rgba(0,0,0,0.08)',
+                      },
+                      '& .MuiDataGrid-row': {
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      },
+                      '& .MuiDataGrid-cell': {
+                        border: '1px solid rgba(0,0,0,0.06)',
+                      },
+                      '& .MuiDataGrid-columnSeparator': {
+                        display: 'none',
+                      },
+                    }}
+                  />
+                </Box>
+              );
+            })}
+          </>
         )}
       </Box>
     </AppTheme>
