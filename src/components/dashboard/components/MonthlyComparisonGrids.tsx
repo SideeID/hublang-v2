@@ -29,7 +29,7 @@ type CombinedRow = {
   selisih_rp?: number;
 };
 
-const columns: GridColDef<CombinedRow>[] = [
+const baseColumns: GridColDef<CombinedRow>[] = [
   {
     field: 'wilayah',
     headerName: '',
@@ -41,7 +41,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'this_lancar',
     headerName: 'Lancar',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'center',
   },
@@ -49,7 +48,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'this_tunggakan',
     headerName: 'Tunggakan',
     type: 'number',
-    width: 130,
     align: 'right',
     headerAlign: 'center',
   },
@@ -57,7 +55,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'this_efisiensi',
     headerName: 'Efisiensi',
     type: 'number',
-    width: 120,
     align: 'right',
     headerAlign: 'center',
   },
@@ -65,7 +62,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'last_lancar',
     headerName: 'Lancar',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'center',
   },
@@ -73,7 +69,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'last_tunggakan',
     headerName: 'Tunggakan',
     type: 'number',
-    width: 130,
     align: 'right',
     headerAlign: 'center',
   },
@@ -81,7 +76,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'last_efisiensi',
     headerName: 'Efisiensi',
     type: 'number',
-    width: 120,
     align: 'right',
     headerAlign: 'center',
   },
@@ -89,7 +83,6 @@ const columns: GridColDef<CombinedRow>[] = [
     field: 'selisih_rp',
     headerName: 'Selisih',
     type: 'number',
-    width: 150,
     align: 'right',
     headerAlign: 'center',
   },
@@ -179,6 +172,37 @@ export default function MonthlyComparisonGrids({
   }, [thisMonth, lastMonth]);
 
   const { dataRows, totalRow } = computedData;
+
+  const columns = React.useMemo(() => {
+    const charWidth = 8;
+    const basePadding = 24;
+    const minWidth = 80;
+    const maxWidth = 220;
+
+    const allRows = [...dataRows, totalRow];
+
+    return baseColumns.map((col) => {
+      if (col.type === 'number') {
+        const headerLen = (col.headerName || '').length;
+        let maxLen = headerLen;
+        for (const r of allRows) {
+          const raw = r[col.field as keyof CombinedRow];
+          const num = typeof raw === 'number' ? raw : undefined;
+          const str = num != null ? num.toLocaleString('id-ID') : '';
+          if (str.length > maxLen) maxLen = str.length;
+        }
+        const computed = Math.min(
+          Math.max(minWidth, basePadding + maxLen * charWidth),
+          maxWidth,
+        );
+        return {
+          ...col,
+          width: computed,
+        } as GridColDef<CombinedRow>;
+      }
+      return col;
+    });
+  }, [dataRows, totalRow]);
 
   const [rows, setRows] = React.useState<CombinedRow[]>([]);
   React.useEffect(() => {

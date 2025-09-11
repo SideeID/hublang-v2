@@ -81,16 +81,32 @@ export default function SignIn() {
     const username = String(data.get('username') || '');
     const password = String(data.get('password') || '');
 
+    const sanitize = (raw: string): string => {
+      const lower = raw.toLowerCase();
+      if (
+        /(unauthorized|invalid|password|username|credential|401)/.test(lower)
+      ) {
+        return 'Username atau password salah.';
+      }
+      if (/(forbidden|403)/.test(lower)) return 'Akses ditolak.';
+      if (/(timeout|timed out)/.test(lower))
+        return 'Permintaan timeout. Coba lagi.';
+      if (/(network|failed to fetch|connection)/.test(lower)) {
+        return 'Koneksi ke server gagal. Periksa jaringan Anda.';
+      }
+      if (/(token).*tidak/i.test(lower)) return 'Sesi tidak valid.';
+      return 'Login gagal. Silakan coba lagi.';
+    };
+
     try {
       const res = await doLogin({ username, password });
       const token = res?.data?.token;
       const user = res?.data?.user?.nama;
       const email = res?.data?.user?.email;
-      if (!token) throw new Error('Token tidak ditemukan');
-      if (!user) throw new Error('User tidak ditemukan');
-      if (!email) throw new Error('Email tidak ditemukan');
-
-      const attrs = ['Path=/', 'Max-Age=604800', 'SameSite=Lax']; // 7 days
+      if (!token || !user || !email) {
+        throw new Error('invalid-structure');
+      }
+      const attrs = ['Path=/', 'Max-Age=604800', 'SameSite=Lax'];
       if (
         typeof window !== 'undefined' &&
         window.location.protocol === 'https:'
@@ -101,11 +117,10 @@ export default function SignIn() {
       document.cookie = `hublang_token=${token}; ${common}`;
       document.cookie = `hublang_user=${encodeURIComponent(user)}; ${common}`;
       document.cookie = `hublang_email=${encodeURIComponent(email)}; ${common}`;
-
       router.replace('/dashboard');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login gagal';
-      setFormError(message);
+      const raw = err instanceof Error ? err.message : '';
+      setFormError(sanitize(raw));
       setUsernameError(true);
       setPasswordError(true);
     }
