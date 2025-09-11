@@ -47,7 +47,8 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'nama',
     headerName: 'Nama',
-    flex: 1,
+    cellClassName: 'wrap-text',
+    width: 200,
     colSpan: (p) => (p?.row && (p.row as Row).id === -1 ? 3 : undefined),
     renderCell: (p) => (p?.row && (p.row as Row).id === -1 ? 'Total' : p.value),
   },
@@ -243,12 +244,37 @@ export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
         rows={rows}
         columns={columns}
         columnGroupingModel={columnGroupingModel}
+        getRowHeight={() => 'auto'}
+        autosizeOnMount
+        autosizeOptions={{
+          columns: [
+            'nama',
+            'pelanggan_total',
+            'pelanggan_aktif',
+            'pelanggan_pasif',
+            'pelanggan_m3',
+            'tagihan_harga_air',
+            'tagihan_data_meter',
+            'tagihan_administrasi',
+            'total_tagihan',
+            'rata_m3',
+            'rata_rupiah',
+          ],
+        }}
         density='compact'
         autoHeight
         disableRowSelectionOnClick
         hideFooter
         pinnedRows={{ bottom: pinnedBottom }}
         sx={{
+          '& .wrap-text .MuiDataGrid-cellContent': {
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'clip',
+            wordBreak: 'break-word',
+            lineHeight: 1.3,
+            display: 'block',
+          },
           '& .MuiDataGrid-columnHeaderTitle': { textAlign: 'center' },
           '& .MuiDataGrid-columnHeaderTitleContainer': {
             justifyContent: 'center',

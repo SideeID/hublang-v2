@@ -45,7 +45,7 @@ export default function DrdRekapMobileList({
       {
         field: 'nama',
         headerName: 'Nama',
-        flex: 1,
+        cellClassName: 'wrap-text',
         headerAlign: 'center',
         align: 'left',
         colSpan: (p) => (p.row?.id === -1 ? 3 : undefined),
@@ -102,8 +102,23 @@ export default function DrdRekapMobileList({
         hideFooter
         disableRowSelectionOnClick
         pinnedRows={{ bottom: pinnedBottom }}
+        getRowHeight={() => 'auto'}
+        autosizeOnMount
+        autosizeOptions={{
+          columns: ['nama', 'pelanggan_total', 'total_tagihan'],
+          includeOutliers: true,
+          includeHeaders: false,
+        }}
         getRowClassName={(p) => (p.id === -1 ? 'total-row' : '')}
         sx={{
+          '& .wrap-text .MuiDataGrid-cellContent': {
+            whiteSpace: 'normal',
+            overflow: 'visible',
+            textOverflow: 'clip',
+            wordBreak: 'break-word',
+            lineHeight: 1.3,
+            display: 'block',
+          },
           '& .MuiDataGrid-cell': {
             py: 0.5,
             px: 1,

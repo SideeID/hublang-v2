@@ -65,7 +65,8 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'golongan',
     headerName: 'GOLONGAN',
-    flex: 1,
+    cellClassName: 'wrap-text',
+    width: 200,
     colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
   {
@@ -399,12 +400,39 @@ export default function DrdGolongan({
                     rows={rows}
                     columns={columns}
                     columnGroupingModel={columnGroupingModel}
+                    getRowHeight={() => 'auto'}
+                    autosizeOnMount
+                    autosizeOptions={{
+                      columns: [
+                        'golongan',
+                        'pelanggan_total',
+                        'pelanggan_aktif',
+                        'pelanggan_pasif',
+                        'pelanggan_m3',
+                        'tagihan_harga_air',
+                        'tagihan_administrasi',
+                        'tagihan_data_meter',
+                        'total_tagihan',
+                        'rata_m3',
+                        'rata_rupiah',
+                      ],
+                      includeOutliers: true,
+                      includeHeaders: false,
+                    }}
                     density='compact'
                     autoHeight
                     disableRowSelectionOnClick
                     hideFooter
                     pinnedRows={{ bottom: pinnedBottom }}
                     sx={{
+                      '& .wrap-text .MuiDataGrid-cellContent': {
+                        whiteSpace: 'normal',
+                        overflow: 'visible',
+                        textOverflow: 'clip',
+                        wordBreak: 'break-word',
+                        lineHeight: 1.3,
+                        display: 'block',
+                      },
                       '& .MuiDataGrid-columnHeaderTitle': {
                         textAlign: 'center',
                       },
