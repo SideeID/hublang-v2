@@ -7,6 +7,7 @@ import { listClasses } from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
+import { doLogout } from '@/lib/api/client';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
 
@@ -52,7 +53,10 @@ export default function OptionsMenu() {
         }}
       >
         <MenuItem
-          onClick={handleClose}
+          onClick={() => {
+            handleClose();
+            doLogout();
+          }}
           sx={{
             display: 'flex',
             justifyContent: 'space-between',

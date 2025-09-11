@@ -7,6 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MenuContent from './MenuContent';
+import { doLogout } from '@/lib/api/client';
 
 interface SideMenuMobileProps {
   open: boolean | undefined;
@@ -84,6 +85,7 @@ export default function SideMenuMobile({
             variant='outlined'
             fullWidth
             startIcon={<LogoutRoundedIcon />}
+            onClick={() => doLogout()}
           >
             Logout
           </Button>
