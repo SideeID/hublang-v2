@@ -304,6 +304,7 @@ export default function Drd({
         rows: rows.map((r, idx) => ({
           id: idx + 1, // numeric id for mobile grid compatibility
           nama: r.golongan,
+          pelanggan_total: r.pelanggan_total,
           total_tagihan: r.total_tagihan,
         })),
       },

@@ -311,6 +311,7 @@ export default function DrdKelurahan({
         rows: rows.map((r) => ({
           id: r.id,
           nama: r.kelurahan,
+          pelanggan_total: r.pelanggan_total,
           total_tagihan: r.total_tagihan,
         })),
       })),

@@ -5,18 +5,18 @@ import Typography from '@mui/material/Typography';
 
 export interface DrdMobileGroupRow {
   id: number;
-  nama: string; // original entity name (golongan/kecamatan/kelurahan)
+  nama: string;
+  pelanggan_total: number;
   total_tagihan: number;
 }
 
 export interface DrdMobileListProps {
   groups: Array<{
-    groupKey: string; // wilayah key
+    groupKey: string;
     rows: DrdMobileGroupRow[];
   }>;
 }
 
-// Reusable columns (Name + Total Tagihan) with total row pinning
 const buildColumns = (): GridColDef<DrdMobileGroupRow>[] => [
   {
     field: 'nama',
@@ -25,8 +25,17 @@ const buildColumns = (): GridColDef<DrdMobileGroupRow>[] => [
     minWidth: 140,
     headerAlign: 'center',
     align: 'left',
-    colSpan: (p) => (p.row?.id === -1 ? 2 : undefined),
+    colSpan: (p) => (p.row?.id === -1 ? 3 : undefined),
     renderCell: (p) => (p.row?.id === -1 ? 'Total' : p.value),
+  },
+  {
+    field: 'pelanggan_total',
+    headerName: 'Total Pelanggan',
+    type: 'number',
+    width: 130,
+    headerAlign: 'center',
+    align: 'right',
+    colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
   {
     field: 'total_tagihan',
@@ -49,11 +58,15 @@ export default function DrdMobileList({ groups }: DrdMobileListProps) {
           {
             id: -1,
             nama: 'Total',
+            pelanggan_total: rows.reduce(
+              (acc, r) => acc + (r.pelanggan_total || 0),
+              0,
+            ),
             total_tagihan: rows.reduce(
               (acc, r) => acc + (r.total_tagihan || 0),
               0,
             ),
-          },
+          } as DrdMobileGroupRow,
         ];
         return (
           <Box key={groupKey} sx={{ mb: 3 }}>

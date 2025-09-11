@@ -315,6 +315,7 @@ export default function DrdGolongan({
         rows: rows.map((r) => ({
           id: r.id,
           nama: r.golongan,
+          pelanggan_total: r.pelanggan_total,
           total_tagihan: r.total_tagihan,
         })),
       })),
