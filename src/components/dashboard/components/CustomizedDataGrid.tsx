@@ -220,6 +220,15 @@ const columns: GridColDef<Row>[] = [
     width: 110,
     align: 'right',
     headerAlign: 'right',
+    valueFormatter: (value) => {
+      const raw = value as number | undefined;
+      if (raw == null) return '';
+      const val = raw <= 1 ? raw * 100 : raw; 
+      return `${val.toLocaleString('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
+      })}%`;
+    },
   },
   {
     field: 'ef_tunggakan',
@@ -228,6 +237,15 @@ const columns: GridColDef<Row>[] = [
     width: 130,
     align: 'right',
     headerAlign: 'right',
+    valueFormatter: (value) => {
+      const raw = value as number | undefined;
+      if (raw == null) return '';
+      const val = raw <= 1 ? raw * 100 : raw;
+      return `${val.toLocaleString('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
+      })}%`;
+    },
   },
   {
     field: 'ef_total',
@@ -236,10 +254,18 @@ const columns: GridColDef<Row>[] = [
     width: 110,
     align: 'right',
     headerAlign: 'right',
+    valueFormatter: (value) => {
+      const raw = value as number | undefined;
+      if (raw == null) return '';
+      const val = raw <= 1 ? raw * 100 : raw;
+      return `${val.toLocaleString('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 1,
+      })}%`;
+    },
   },
 ];
 
-// Base grouping model (excluding the dynamic single-field Kasir/Loket group which will be added per source).
 const baseColumnGroupingModel: GridColumnGroupingModel = [
   // { groupId: 'Kasir', children: [{ field: 'kasir' }] },
   // { groupId: 'Jumlah Rayon', children: [{ field: 'jumlahRayon' }] },
@@ -478,8 +504,7 @@ export default function CustomizedDataGrid({
   }, []);
 
   const pct = React.useCallback(
-    (num: number, den: number) =>
-      den > 0 ? Math.round((num / den) * 1000) / 10 : 0,
+    (num: number, den: number) => (den > 0 ? (num / den) * 100 : 0),
     [],
   );
 
