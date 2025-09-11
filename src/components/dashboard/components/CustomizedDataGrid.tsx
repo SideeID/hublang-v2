@@ -550,7 +550,7 @@ export default function CustomizedDataGrid({
         fetchParams.kel_id ?? '',
         fetchParams.rekfrom ?? '',
         fetchParams.rekto ?? '',
-        fetchParams.tim_tagih ?? '',
+        fetchParams.timtagih ?? '',
       ].join('|')
     : null;
   const {

@@ -105,7 +105,7 @@ export default function Client() {
       rekto: maxJmlrek !== undefined ? String(maxJmlrek) : undefined,
       kec_id: kecamatanId || undefined,
       kel_id: kelurahanId || undefined,
-      tim_tagih: timTagih || undefined,
+      timtagih: timTagih || undefined,
     }),
     [
       periode,
