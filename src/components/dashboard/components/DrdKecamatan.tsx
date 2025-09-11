@@ -26,7 +26,6 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DrdMobileList from './DrdMobileList';
-// DrdRekapTable dihapus sesuai permintaan; import dihilangkan
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -55,7 +54,6 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'no',
     headerName: 'No',
-    width: 70,
     align: 'right',
     headerAlign: 'right',
     colSpan: (p) => (p.row?.id === -1 ? 2 : undefined),
@@ -64,7 +62,6 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'kecamatan',
     headerName: 'KECAMATAN',
-    minWidth: 180,
     flex: 1,
     colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
@@ -72,7 +69,6 @@ const columns: GridColDef<Row>[] = [
     field: 'pelanggan_total',
     headerName: 'Total',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'right',
   },
@@ -80,7 +76,6 @@ const columns: GridColDef<Row>[] = [
     field: 'pelanggan_aktif',
     headerName: 'Aktif',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'right',
   },
@@ -88,7 +83,6 @@ const columns: GridColDef<Row>[] = [
     field: 'pelanggan_pasif',
     headerName: 'Pasif',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'right',
   },
@@ -96,7 +90,6 @@ const columns: GridColDef<Row>[] = [
     field: 'pelanggan_m3',
     headerName: 'M3',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'right',
   },
@@ -104,7 +97,6 @@ const columns: GridColDef<Row>[] = [
     field: 'tagihan_harga_air',
     headerName: 'Harga Air',
     type: 'number',
-    width: 140,
     align: 'right',
     headerAlign: 'right',
   },
@@ -112,7 +104,6 @@ const columns: GridColDef<Row>[] = [
     field: 'tagihan_administrasi',
     headerName: 'Administrasi',
     type: 'number',
-    width: 140,
     align: 'right',
     headerAlign: 'right',
   },
@@ -120,7 +111,6 @@ const columns: GridColDef<Row>[] = [
     field: 'tagihan_data_meter',
     headerName: 'Data Meter',
     type: 'number',
-    width: 140,
     align: 'right',
     headerAlign: 'right',
   },
@@ -128,7 +118,6 @@ const columns: GridColDef<Row>[] = [
     field: 'total_tagihan',
     headerName: 'TOTAL TAGIHAN',
     type: 'number',
-    width: 160,
     align: 'right',
     headerAlign: 'right',
   },
@@ -136,7 +125,6 @@ const columns: GridColDef<Row>[] = [
     field: 'rata_m3',
     headerName: 'M3',
     type: 'number',
-    width: 110,
     align: 'right',
     headerAlign: 'right',
   },
@@ -144,7 +132,6 @@ const columns: GridColDef<Row>[] = [
     field: 'rata_rupiah',
     headerName: 'RUPIAH',
     type: 'number',
-    width: 140,
     align: 'right',
     headerAlign: 'right',
   },

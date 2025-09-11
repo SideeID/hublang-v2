@@ -22,6 +22,7 @@ export interface DateRangeFilterProps {
   onEndChange: (d: Dayjs) => void;
   hideLocations?: boolean;
   compact?: boolean;
+  hidePeriode?: boolean;
   wilayahId?: string;
   onWilayahChange?: (value: string) => void;
   rayonId?: string;
@@ -39,6 +40,7 @@ export default function DateRangeFilter({
   onEndChange,
   hideLocations = false,
   compact = false,
+  hidePeriode = false,
   wilayahId = '',
   onWilayahChange,
   rayonId = '',
@@ -80,36 +82,38 @@ export default function DateRangeFilter({
         }
       >
         <Grid container spacing={1.5} alignItems='center' wrap='wrap'>
-          <Grid size={{ xs: 12, sm: 'auto' }}>
-            <div suppressHydrationWarning>
-              <DatePicker
-                label='Periode'
-                views={['year', 'month']}
-                openTo='month'
-                format='MMMM YYYY'
-                reduceAnimations
-                value={start}
-                onChange={(newValue) => {
-                  if (!newValue) return;
-                  const startMonth = newValue.startOf('month');
-                  let resultingEnd = end;
-                  if (resultingEnd.isBefore(startMonth)) {
-                    resultingEnd = startMonth.endOf('month');
-                    onEndChange(resultingEnd);
-                  }
-                  onStartChange(startMonth);
-                }}
-                slotProps={{
-                  textField: {
-                    size: 'small',
-                    fullWidth: true,
-                    sx: { width: { xs: '100%', sm: 180 } },
-                    inputProps: { readOnly: true },
-                  },
-                }}
-              />
-            </div>
-          </Grid>
+          {!hidePeriode && (
+            <Grid size={{ xs: 12, sm: 'auto' }}>
+              <div suppressHydrationWarning>
+                <DatePicker
+                  label='Periode'
+                  views={['year', 'month']}
+                  openTo='month'
+                  format='MMMM YYYY'
+                  reduceAnimations
+                  value={start}
+                  onChange={(newValue) => {
+                    if (!newValue) return;
+                    const startMonth = newValue.startOf('month');
+                    let resultingEnd = end;
+                    if (resultingEnd.isBefore(startMonth)) {
+                      resultingEnd = startMonth.endOf('month');
+                      onEndChange(resultingEnd);
+                    }
+                    onStartChange(startMonth);
+                  }}
+                  slotProps={{
+                    textField: {
+                      size: 'small',
+                      fullWidth: true,
+                      sx: { width: { xs: '100%', sm: 180 } },
+                      inputProps: { readOnly: true },
+                    },
+                  }}
+                />
+              </div>
+            </Grid>
+          )}
 
           {!hideLocations && (
             <Grid size={{ xs: 12, sm: 'auto' }}>

@@ -34,7 +34,6 @@ const baseColumns: GridColDef<CombinedRow>[] = [
     field: 'wilayah',
     headerName: '',
     flex: 1,
-    minWidth: 140,
     headerAlign: 'center',
   },
   {

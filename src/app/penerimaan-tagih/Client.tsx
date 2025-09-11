@@ -193,6 +193,7 @@ export default function Client() {
                     end={endD}
                     onStartChange={setStartD}
                     onEndChange={setEndD}
+                    hidePeriode
                     wilayahId={draftWilayahId}
                     onWilayahChange={(v) => {
                       setDraftWilayahId(v);
