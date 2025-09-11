@@ -45,6 +45,7 @@ export default function DrdRekapMobileList({
       {
         field: 'nama',
         headerName: 'Nama',
+        minWidth: 200,
         cellClassName: 'wrap-text',
         headerAlign: 'center',
         align: 'left',
@@ -54,6 +55,7 @@ export default function DrdRekapMobileList({
       {
         field: 'pelanggan_total',
         headerName: 'Total Pelanggan',
+        minWidth: 170,
         type: 'number',
         headerAlign: 'center',
         align: 'right',
@@ -62,6 +64,7 @@ export default function DrdRekapMobileList({
       {
         field: 'total_tagihan',
         headerName: 'Total Tagihan',
+        minWidth: 150,
         type: 'number',
         headerAlign: 'center',
         align: 'right',

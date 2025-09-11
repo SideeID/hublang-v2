@@ -21,6 +21,7 @@ const buildColumns = (): GridColDef<DrdMobileGroupRow>[] => [
   {
     field: 'nama',
     headerName: 'Nama',
+    minWidth: 200,
     cellClassName: 'wrap-text',
     headerAlign: 'center',
     align: 'left',
@@ -30,6 +31,7 @@ const buildColumns = (): GridColDef<DrdMobileGroupRow>[] => [
   {
     field: 'pelanggan_total',
     headerName: 'Total Pelanggan',
+    minWidth: 170,
     type: 'number',
     headerAlign: 'center',
     align: 'right',
@@ -38,6 +40,7 @@ const buildColumns = (): GridColDef<DrdMobileGroupRow>[] => [
   {
     field: 'total_tagihan',
     headerName: 'Total Tagihan',
+    minWidth: 150,
     type: 'number',
     headerAlign: 'center',
     align: 'right',
