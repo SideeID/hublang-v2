@@ -112,6 +112,7 @@ const columns: GridColDef<Row>[] = [
     field: 'tagihan_harga_air',
     headerName: 'Harga Air',
     type: 'number',
+    width: 200,
     align: 'right',
     headerAlign: 'right',
   },
@@ -346,23 +347,6 @@ export default function Drd({
             columnGroupingModel={columnGroupingModel}
             getRowHeight={() => 'auto'}
             autosizeOnMount
-            autosizeOptions={{
-              columns: [
-                'golongan',
-                'pelanggan_total',
-                'pelanggan_aktif',
-                'pelanggan_pasif',
-                'pelanggan_m3',
-                'tagihan_harga_air',
-                'tagihan_administrasi',
-                'tagihan_data_meter',
-                'total_tagihan',
-                'rata_m3',
-                'rata_rupiah',
-              ],
-              includeOutliers: true,
-              includeHeaders: false,
-            }}
             density='compact'
             autoHeight
             disableRowSelectionOnClick

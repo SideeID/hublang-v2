@@ -55,6 +55,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'no',
     headerName: 'No',
+    width: 70,
     align: 'right',
     headerAlign: 'right',
     colSpan: (p) => (p.row?.id === -1 ? 2 : undefined),
@@ -63,12 +64,14 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'kelurahan',
     headerName: 'KELURAHAN',
+    width: 200,
     cellClassName: 'wrap-text',
     colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
   },
   {
     field: 'pelanggan_total',
     headerName: 'Total',
+    minWidth: 100,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -76,6 +79,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'pelanggan_aktif',
     headerName: 'Aktif',
+    minWidth: 100,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -83,6 +87,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'pelanggan_pasif',
     headerName: 'Pasif',
+    minWidth: 100,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -90,6 +95,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'pelanggan_m3',
     headerName: 'M3',
+    minWidth: 100,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -97,6 +103,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'tagihan_harga_air',
     headerName: 'Harga Air',
+    minWidth: 150,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -104,6 +111,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'tagihan_administrasi',
     headerName: 'Administrasi',
+    minWidth: 150,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -111,6 +119,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'tagihan_data_meter',
     headerName: 'Data Meter',
+    minWidth: 150,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -118,6 +127,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'total_tagihan',
     headerName: 'TOTAL TAGIHAN',
+    minWidth: 150,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -125,6 +135,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'rata_m3',
     headerName: 'M3',
+    minWidth: 100,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -132,6 +143,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'rata_rupiah',
     headerName: 'RUPIAH',
+    minWidth: 150,
     type: 'number',
     align: 'right',
     headerAlign: 'right',
@@ -373,11 +385,10 @@ export default function DrdKelurahan({
                     rows={rows}
                     columns={columns}
                     columnGroupingModel={columnGroupingModel}
-                    getRowHeight={() => 'auto'}
                     autosizeOnMount
                     autosizeOptions={{
                       columns: [
-                        'golongan',
+                        'kelurahan',
                         'pelanggan_total',
                         'pelanggan_aktif',
                         'pelanggan_pasif',
@@ -393,6 +404,7 @@ export default function DrdKelurahan({
                       includeHeaders: false,
                     }}
                     density='compact'
+                    getRowHeight={() => 'auto'}
                     autoHeight
                     disableRowSelectionOnClick
                     hideFooter
