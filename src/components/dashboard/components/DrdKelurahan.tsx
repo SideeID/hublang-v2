@@ -26,7 +26,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import DrdMobileList from './DrdMobileList';
-// DrdRekapTable dihapus sesuai permintaan; import dihilangkan
+import DrdRekapMobileList from './DrdRekapMobileList';
+import DrdRekapTable from './DrdRekapTable';
+import type { DrdRekapTableProps } from './DrdRekapTable';
 
 const xThemeComponents = {
   ...chartsCustomizations,
@@ -354,9 +356,31 @@ export default function DrdKelurahan({
         ) : Array.from(grouped.entries()).length === 0 ? (
           <Alert severity='info'>Tidak ada data untuk periode ini.</Alert>
         ) : isMobile ? (
-          <DrdMobileList groups={mobileGroups} />
+          <>
+            <Box sx={{ mb: 1 }}>
+              <Typography variant='h6' sx={{ mb: 1 }}>
+                Rekap Kelurahan
+              </Typography>
+              <DrdRekapMobileList
+                data={
+                  (data as { data?: { rekap?: DrdRekapTableProps['data'] } })
+                    ?.data?.rekap || []
+                }
+              />
+            </Box>
+            <Box sx={{ mt: 2 }}>
+              <DrdMobileList groups={mobileGroups} />
+            </Box>
+          </>
         ) : (
           <>
+            <DrdRekapTable
+              data={
+                (data as { data?: { rekap?: DrdRekapTableProps['data'] } })
+                  ?.data?.rekap || []
+              }
+              title='Rekap Kelurahan'
+            />
             {Array.from(grouped.entries()).map(([wilayah, rows]) => {
               const { sum, avg } = computeTotals(rows);
               const pinnedBottom = [

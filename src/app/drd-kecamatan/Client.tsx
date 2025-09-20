@@ -40,7 +40,7 @@ const xThemeComponents = {
 type Row = {
   id: number;
   no: number;
-  kecamatan: string; // name column label changed
+  kecamatan: string;
   wilayah: string;
   pelanggan_total: number;
   pelanggan_aktif: number;

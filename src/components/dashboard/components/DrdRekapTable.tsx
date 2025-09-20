@@ -19,12 +19,15 @@ interface RawRekapItem {
   danameter: number | string;
   administrasi: number | string;
   total_tagihan: number | string;
-  rata2m3: number | string;
-  rata2rp: number | string;
+  rata2m3?: number | string;
+  rata2rp?: number | string;
 }
 
 export interface DrdRekapTableProps {
-  data?: RawRekapItem[] | null;
+  data?:
+    | RawRekapItem[]
+    | Record<string, Partial<Omit<RawRekapItem, 'nama'>>>
+    | null;
   title?: string;
 }
 
@@ -172,10 +175,15 @@ function toFloat(v: number | string | undefined): number {
 
 export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
   const rows = React.useMemo<Row[]>(() => {
-    if (!Array.isArray(data)) return [];
-    return data.map((r, idx) => ({
+    if (!data) return [];
+
+    const toRow = (
+      r: Partial<RawRekapItem>,
+      idx: number,
+      overrideNama?: string,
+    ): Row => ({
       id: idx + 1,
-      nama: r.nama,
+      nama: overrideNama ?? r.nama ?? '-',
       pelanggan_total: toNum(r.totalpel),
       pelanggan_aktif: toNum(r.jmlaktif),
       pelanggan_pasif: toNum(r.jmlpelpasif),
@@ -186,7 +194,22 @@ export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
       total_tagihan: toNum(r.total_tagihan),
       rata_m3: toFloat(r.rata2m3),
       rata_rupiah: toFloat(r.rata2rp),
-    }));
+    });
+
+    if (Array.isArray(data)) {
+      return data.map((r, idx) => toRow(r, idx));
+    }
+
+    if (typeof data === 'object') {
+      const entries = Object.entries(
+        data as Record<string, Partial<Omit<RawRekapItem, 'nama'>>>,
+      );
+      return entries.map(([key, val], idx) =>
+        toRow(val as Partial<RawRekapItem>, idx, key),
+      );
+    }
+
+    return [];
   }, [data]);
 
   const totals = React.useMemo(() => {
@@ -224,24 +247,28 @@ export default function DrdRekapTable({ data, title }: DrdRekapTableProps) {
     };
   }, [rows]);
 
-  if (!rows.length) return null;
-
-  const pinnedBottom = [
-    {
-      id: -1,
-      nama: 'Total',
-      pelanggan_total: totals.sum.pelanggan_total,
-      pelanggan_aktif: totals.sum.pelanggan_aktif,
-      pelanggan_pasif: totals.sum.pelanggan_pasif,
-      pelanggan_m3: totals.sum.pelanggan_m3,
-      tagihan_harga_air: totals.sum.tagihan_harga_air,
-      tagihan_data_meter: totals.sum.tagihan_data_meter,
-      tagihan_administrasi: totals.sum.tagihan_administrasi,
-      total_tagihan: totals.sum.total_tagihan,
-      rata_m3: totals.avg.rata_m3,
-      rata_rupiah: totals.avg.rata_rupiah,
-    } as unknown as Row,
-  ];
+  const pinnedBottom = React.useMemo(
+    () =>
+      rows.length
+        ? ([
+            {
+              id: -1,
+              nama: 'Total',
+              pelanggan_total: totals.sum.pelanggan_total,
+              pelanggan_aktif: totals.sum.pelanggan_aktif,
+              pelanggan_pasif: totals.sum.pelanggan_pasif,
+              pelanggan_m3: totals.sum.pelanggan_m3,
+              tagihan_harga_air: totals.sum.tagihan_harga_air,
+              tagihan_data_meter: totals.sum.tagihan_data_meter,
+              tagihan_administrasi: totals.sum.tagihan_administrasi,
+              total_tagihan: totals.sum.total_tagihan,
+              rata_m3: totals.avg.rata_m3,
+              rata_rupiah: totals.avg.rata_rupiah,
+            } as unknown as Row,
+          ] as Row[])
+        : ([] as Row[]),
+    [rows, totals],
+  );
 
   return (
     <Box sx={{ mb: 3 }}>
