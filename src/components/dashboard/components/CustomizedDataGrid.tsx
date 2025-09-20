@@ -47,7 +47,7 @@ const columns: GridColDef<Row>[] = [
   {
     field: 'kasir',
     headerName: 'Kasir',
-    flex: 1,
+    minWidth: 150,
     headerAlign: 'center',
   },
   // {
@@ -202,7 +202,7 @@ const columns: GridColDef<Row>[] = [
     valueFormatter: (value) => {
       const raw = value as number | undefined;
       if (raw == null) return '';
-      const val = raw <= 1 ? raw * 100 : raw; 
+      const val = raw <= 1 ? raw * 100 : raw;
       return `${val.toLocaleString('id-ID', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 1,
@@ -555,14 +555,15 @@ export default function CustomizedDataGrid({
         fetchParams.timtagih ?? '',
       ].join('|')
     : null;
-  const {
-    data: rekapData,
-    isLoading: swrLoading,
-    isValidating,
-  } = useSWR<RekapResponse>(
+  const { data: rekapData } = useSWR<RekapResponse>(
     swrKey,
     () => getRekap(fetchParams as RekapParams),
     { revalidateOnFocus: false },
+  );
+
+  const loading = React.useMemo(
+    () => Boolean(swrKey) && !rekapData,
+    [swrKey, rekapData],
   );
 
   const fetchedRows = React.useMemo(() => {
@@ -573,15 +574,15 @@ export default function CustomizedDataGrid({
     return mapDetailToRow(detail);
   }, [rekapData, mapDetailToRow, source]);
 
-  const [rows, setRows] = React.useState<Row[]>(propRows ?? sampleRows);
+  const [rows, setRows] = React.useState<Row[]>(
+    propRows ?? (fetchParams ? [] : sampleRows),
+  );
   React.useEffect(() => {
     if (Array.isArray(propRows)) setRows(propRows);
   }, [propRows]);
   React.useEffect(() => {
     if (Array.isArray(fetchedRows)) setRows(fetchedRows);
   }, [fetchedRows]);
-
-  const showLoading = swrLoading || isValidating;
 
   const pinnedBottom = React.useMemo(() => {
     const data = rows ?? [];
@@ -618,6 +619,7 @@ export default function CustomizedDataGrid({
 
   return (
     <DataGridPro
+      loading={loading}
       density='compact'
       disableRowSelectionOnClick
       rows={rows}
@@ -628,7 +630,6 @@ export default function CustomizedDataGrid({
       getRowClassName={(params) =>
         params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd'
       }
-      loading={showLoading}
       slotProps={{
         loadingOverlay: {
           variant: 'skeleton',

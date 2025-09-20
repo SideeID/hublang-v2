@@ -21,45 +21,44 @@ const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
+  padding: theme.spacing(5),
+  gap: theme.spacing(3),
   margin: 'auto',
   [theme.breakpoints.up('sm')]: {
     maxWidth: '400px',
   },
-  borderRadius: theme.spacing(2),
-  backgroundColor: theme.palette.background.paper,
+  borderRadius: theme.spacing(3),
+  backgroundColor:
+    theme.palette.mode === 'light'
+      ? '#ffffff'
+      : theme.palette.background.paper,
   border: `1px solid ${theme.palette.divider}`,
-  boxShadow: 'none',
+  boxShadow: theme.shadows[8],
+  transition: 'box-shadow .2s ease',
+  '&:hover': {
+    boxShadow: theme.shadows[12],
+  },
 }));
 
 const RootContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  height: '100vh',
+  minHeight: '100vh',
   width: '100%',
-  overflow: 'hidden',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-  },
-}));
-
-const ImageSection = styled(Box)(({ theme }) => ({
-  flex: 1,
-  backgroundImage: 'url("https://picsum.photos/900/1200?random")',
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  [theme.breakpoints.down('md')]: {
-    height: '40vh',
-  },
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: theme.spacing(2),
+  background:
+    theme.palette.mode === 'light'
+      ? 'linear-gradient(135deg, #f5f7fa 0%, #eef2f6 100%)'
+      : 'linear-gradient(135deg, #0b0f19 0%, #0f172a 100%)',
 }));
 
 const FormSection = styled(Stack)(({ theme }) => ({
-  flex: 1,
+  width: '100%',
+  maxWidth: 440,
   justifyContent: 'center',
   alignItems: 'center',
-  padding: theme.spacing(4),
-  backgroundColor: theme.palette.background.default,
+  padding: theme.spacing(2),
 }));
 
 export default function SignIn() {
@@ -164,7 +163,6 @@ export default function SignIn() {
     <>
       <CssBaseline enableColorScheme />
       <RootContainer>
-        <ImageSection />
         <FormSection>
           <Card variant='outlined'>
             <Typography
@@ -173,6 +171,13 @@ export default function SignIn() {
               sx={{ textAlign: 'center', fontWeight: 600 }}
             >
               Hublang
+            </Typography>
+            <Typography
+              variant='body2'
+              color='text.secondary'
+              sx={{ textAlign: 'center', mt: -1 }}
+            >
+              Masuk untuk melanjutkan ke dashboard
             </Typography>
             {formError && (
               <Alert severity='error' variant='outlined'>
@@ -187,7 +192,7 @@ export default function SignIn() {
                 display: 'flex',
                 flexDirection: 'column',
                 width: '100%',
-                gap: 2,
+                gap: 3,
               }}
             >
               <FormControl>
@@ -204,6 +209,11 @@ export default function SignIn() {
                   fullWidth
                   variant='outlined'
                   color={usernameError ? 'error' : 'primary'}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
                   onChange={(e) => {
                     if (e.currentTarget.value.length >= 3) {
                       setUsernameError(false);
@@ -226,6 +236,11 @@ export default function SignIn() {
                   fullWidth
                   variant='outlined'
                   color={passwordError ? 'error' : 'primary'}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2,
+                    },
+                  }}
                   onChange={(e) => {
                     if (e.currentTarget.value.length >= 6) {
                       setPasswordError(false);
@@ -239,7 +254,13 @@ export default function SignIn() {
                 fullWidth
                 variant='contained'
                 disabled={isPending}
-                sx={{ py: 1.5, fontWeight: 600, borderRadius: 2 }}
+                sx={{
+                  py: 1.4,
+                  fontWeight: 700,
+                  letterSpacing: 0.2,
+                  borderRadius: 2,
+                  boxShadow: (theme) => theme.shadows[2],
+                }}
               >
                 {isPending ? (
                   <>
@@ -250,11 +271,12 @@ export default function SignIn() {
                 )}
               </Button>
             </Box>
-            <Divider sx={{ my: 2 }}>atau</Divider>
+            <Divider sx={{ my: 1.5, color: 'text.secondary' }}>atau</Divider>
             <Typography
               variant='body2'
               textAlign='center'
               color='text.secondary'
+              sx={{ mt: 0.5 }}
             >
               Hubungi admin jika ada kendala
             </Typography>
