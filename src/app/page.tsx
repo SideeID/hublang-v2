@@ -72,6 +72,14 @@ export default function SignIn() {
   const router = useRouter();
   const { mutateAsync: doLogin, isPending } = useLogin();
 
+  React.useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const hasToken = document.cookie
+      .split('; ')
+      .some((c) => c.startsWith('hublang_token=') && c.split('=')[1]);
+    if (hasToken) router.replace('/dashboard');
+  }, [router]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormError(null);
