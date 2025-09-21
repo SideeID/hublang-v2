@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -57,8 +58,17 @@ export default function SideMenu() {
           display: 'flex',
           mt: 'calc(var(--template-frame-height, 0px) + 4px)',
           p: 1.5,
+          alignItems: 'center',
+          gap: 1,
         }}
       >
+        <Image
+          src='/icon-hublang.png'
+          alt='Logo Hublang'
+          width={50}
+          height={50}
+          priority
+        />
         <Typography
           variant='h6'
           sx={{

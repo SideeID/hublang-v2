@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -165,6 +166,15 @@ export default function SignIn() {
       <RootContainer>
         <FormSection>
           <Card variant='outlined'>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Image
+                src='/icon-hublang.png'
+                alt='Logo Hublang'
+                width={56}
+                height={56}
+                priority
+              />
+            </Box>
             <Typography
               component='h1'
               variant='h4'
