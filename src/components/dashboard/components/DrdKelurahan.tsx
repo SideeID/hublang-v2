@@ -65,7 +65,7 @@ const columns: GridColDef<Row>[] = [
   },
   {
     field: 'kelurahan',
-    headerName: 'KELURAHAN',
+    headerName: 'GOLONGAN',
     width: 200,
     cellClassName: 'wrap-text',
     colSpan: (p) => (p.row?.id === -1 ? 0 : undefined),
