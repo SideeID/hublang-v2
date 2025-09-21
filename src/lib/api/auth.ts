@@ -15,7 +15,7 @@ export interface LoginResponse {
 }
 
 export async function login(payload: LoginPayload) {
-  return apiFetch<LoginResponse>(`/auth/login`, {
+  return apiFetch<LoginResponse>(`/api/direksi/login`, {
     method: 'POST',
     body: JSON.stringify(payload),
   });

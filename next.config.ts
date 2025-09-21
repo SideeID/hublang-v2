@@ -12,12 +12,16 @@ const nextConfig: NextConfig = {
         destination: `${API_BASE}/auth/:path*`,
       },
       {
-        source: '/api/hublang/:path*',
-        destination: `${API_BASE}/api/hublang/:path*`,
+        source: '/api/:path*',
+        destination: `${API_BASE}/api/:path*`,
       },
       {
-        source: '/api/filter/:path*',
-        destination: `${API_BASE}/api/filter/:path*`,
+        source: '/api/direksi/:path*',
+        destination: `${API_BASE}/api/direksi/:path*`,
+      },
+      {
+        source: '/api/direksi/filter/:path*',
+        destination: `${API_BASE}/api/direksi/filter/:path*`,
       },
     ];
   },
