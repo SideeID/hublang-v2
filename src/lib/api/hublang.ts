@@ -46,7 +46,7 @@ export function getPenerimaan(params: PenerimaanParams) {
     ([, v]) => v !== undefined && v !== '',
   );
   const search = new URLSearchParams(entries as [string, string][]).toString();
-  return apiFetch<PenerimaanResponse>(`/api/hublang/penerimaan?${search}`);
+  return apiFetch<PenerimaanResponse>(`/api/direksi/penerimaan?${search}`);
 }
 
 export interface WilayahItem {
@@ -59,7 +59,7 @@ export interface WilayahResponse {
   data: WilayahItem[];
 }
 export function getWilayah() {
-  return apiFetch<WilayahResponse>(`/api/filter/wilayah`);
+  return apiFetch<WilayahResponse>(`/api/direksi/filter/wilayah`);
 }
 
 export interface RayonItem {
@@ -74,7 +74,7 @@ export interface RayonResponse {
 }
 export function getRayon(wil_id: string) {
   const search = new URLSearchParams({ wil_id }).toString();
-  return apiFetch<RayonResponse>(`/api/filter/rayon?${search}`);
+  return apiFetch<RayonResponse>(`/api/direksi/filter/rayon?${search}`);
 }
 
 export interface KecamatanItem {
@@ -87,7 +87,7 @@ export interface KecamatanResponse {
   data: KecamatanItem[];
 }
 export function getKecamatan() {
-  return apiFetch<KecamatanResponse>(`/api/filter/kecamatan`);
+  return apiFetch<KecamatanResponse>(`/api/direksi/filter/kecamatan`);
 }
 
 export interface KelurahanItem {
@@ -101,7 +101,7 @@ export interface KelurahanResponse {
 }
 export function getKelurahan(kec_id: string) {
   const search = new URLSearchParams({ kec_id }).toString();
-  return apiFetch<KelurahanResponse>(`/api/filter/kelurahan?${search}`);
+  return apiFetch<KelurahanResponse>(`/api/direksi/filter/kelurahan?${search}`);
 }
 
 export interface RekapDetailItem {
@@ -166,7 +166,7 @@ export interface TimTagihResponse {
   data: TimTagihItem[];
 }
 export function getTimTagih() {
-  return apiFetch<TimTagihResponse>(`/api/filter/timtagih`);
+  return apiFetch<TimTagihResponse>(`/api/direksi/filter/timtagih`);
 }
 
 export interface DrdItem {
@@ -195,22 +195,22 @@ export interface DrdResponse {
 
 export function getDrd(periode: string) {
   const search = new URLSearchParams({ periode }).toString();
-  return apiFetch<DrdResponse>(`/api/hublang/drd?${search}`);
+  return apiFetch<DrdResponse>(`/api/direksi/drd?${search}`);
 }
 
 export function getDrdKelurahan(periode: string) {
   const search = new URLSearchParams({ periode }).toString();
-  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/kelurahan?${search}`);
+  return apiFetch<DrdResponse>(`/api/direksi/drd/ikk/kelurahan?${search}`);
 }
 
 export function getDrdKecamatan(periode: string) {
   const search = new URLSearchParams({ periode }).toString();
-  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/kecamatan?${search}`);
+  return apiFetch<DrdResponse>(`/api/direksi/drd/ikk/kecamatan?${search}`);
 }
 
 export function getDrdGolongan(periode: string) {
   const search = new URLSearchParams({ periode }).toString();
-  return apiFetch<DrdResponse>(`/api/hublang/drd/ikk/golongan?${search}`);
+  return apiFetch<DrdResponse>(`/api/direksi/drd/ikk/golongan?${search}`);
 }
 
 export interface RekapParams {
@@ -229,5 +229,5 @@ export function getRekap(params: RekapParams) {
     ([, v]) => v !== undefined && v !== '',
   );
   const search = new URLSearchParams(entries as [string, string][]).toString();
-  return apiFetch<RekapResponse>(`/api/hublang/rekap?${search}`);
+  return apiFetch<RekapResponse>(`/api/direksi/rekap?${search}`);
 }
