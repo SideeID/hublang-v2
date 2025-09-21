@@ -6,6 +6,6 @@ export function useTimTagih(enabled = true) {
     queryKey: ['timtagih'],
     queryFn: () => getTimTagih(),
     enabled,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 }
